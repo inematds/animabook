@@ -214,30 +214,12 @@ export function BookReader({ story, isDevMode, isLoggedIn = false, publicationMe
         {/* Progress dots */}
         <ProgressDots total={story.scenes.length} current={index} onDotClick={goTo} />
 
-        {/* Navegação principal — grande e clara */}
-        <div
-          className="flex items-center justify-center gap-3 px-4 py-4"
-          style={{ borderTop: '1px solid rgba(232,200,74,0.12)', marginTop: '4px' }}
-        >
-          <Link
-            href="/"
-            className="flex items-center gap-2"
-            style={{
-              fontFamily: 'var(--font-bangers)',
-              fontSize: '18px',
-              letterSpacing: '0.06em',
-              color: '#e8c84a',
-              textDecoration: 'none',
-              padding: '10px 22px',
-              borderRadius: '28px',
-              background: 'rgba(232,200,74,0.14)',
-              border: '2px solid rgba(232,200,74,0.5)',
-            }}
+        {/* Botão voltar ao início — só aparece quando não está na cena 1 */}
+        {!isFirst && (
+          <div
+            className="flex items-center justify-center px-4 py-4"
+            style={{ borderTop: '1px solid rgba(232,200,74,0.12)', marginTop: '4px' }}
           >
-            🏠 Livros
-          </Link>
-
-          {!isFirst && (
             <motion.button
               onClick={() => goTo(0)}
               whileTap={{ scale: 0.95 }}
@@ -256,8 +238,8 @@ export function BookReader({ story, isDevMode, isLoggedIn = false, publicationMe
             >
               ⏮ Início
             </motion.button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
