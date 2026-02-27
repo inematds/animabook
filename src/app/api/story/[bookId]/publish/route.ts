@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
+import path from 'path';
+import fs from 'fs';
 
 interface RouteParams {
   params: Promise<{ bookId: string }>;
@@ -14,7 +16,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
   }
 
-  // Busca o rascunho do usuário
+  // Tenta rascunho do usuário primeiro
   const { data: draft } = await supabase
     .from('drafts')
     .select('content')
@@ -22,13 +24,20 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     .eq('book_id', bookId)
     .single();
 
-  if (!draft?.content) {
-    return NextResponse.json({ error: 'Nenhum rascunho encontrado' }, { status: 404 });
+  // Fallback: story.md do livro
+  let content = draft?.content ?? '';
+  if (!content) {
+    const mdPath = path.join(process.cwd(), 'books', bookId, 'story.md');
+    content = fs.existsSync(mdPath) ? fs.readFileSync(mdPath, 'utf-8') : '';
+  }
+
+  if (!content) {
+    return NextResponse.json({ error: 'Nenhum conteúdo para publicar' }, { status: 404 });
   }
 
   const { data: publication, error } = await supabase
     .from('publications')
-    .insert({ user_id: user.id, book_id: bookId, content: draft.content })
+    .insert({ user_id: user.id, book_id: bookId, content })
     .select('id')
     .single();
 

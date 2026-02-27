@@ -123,7 +123,8 @@ export function StoryEditor({ initialStory, userId: _userId }: StoryEditorProps)
   }, [story]);
 
   const handlePublish = useCallback(async () => {
-    if (saveStatus === 'unsaved') await handleSave();
+    // Sempre salva antes de publicar para garantir que o rascunho existe no banco
+    await handleSave();
     setPublishing(true);
     try {
       const res = await fetch(`/api/story/${story.bookId}/publish`, { method: 'POST' });

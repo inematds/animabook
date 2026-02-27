@@ -67,7 +67,12 @@ export default async function PublicationPage({ params }: Props) {
     username = profile?.username ?? null;
   }
 
-  const story = parseStoryContent(pub.book_id, pub.content);
+  // Tenta parsear o conteúdo salvo; fallback para story.md se vazio
+  let story = parseStoryContent(pub.book_id, pub.content ?? '');
+  if (story.scenes.length === 0) {
+    const { parseStoryMd } = await import('@/lib/parseStory');
+    story = parseStoryMd(pub.book_id);
+  }
   if (story.scenes.length === 0) notFound();
 
   const authorName = (pub.profiles as { username: string } | null)?.username ?? 'Usuário';
