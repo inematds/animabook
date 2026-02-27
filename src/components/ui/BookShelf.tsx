@@ -195,89 +195,79 @@ export function BookShelf({ books, videos, isLoggedIn, username, visitStats }: B
       {/* ── Conteúdo principal ── */}
       <div className="w-full max-w-lg mx-auto px-3 py-5 flex-1 relative z-10">
 
-        {/* Layout: marketing + livros lado a lado em telas maiores */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-4" style={{ alignItems: 'flex-start' }}>
-
-          {/* ── Painel de marketing ── */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-            className="sm:w-44 flex-shrink-0 w-full"
-            style={{
-              background: 'linear-gradient(160deg, rgba(107,72,255,0.18) 0%, rgba(232,200,74,0.08) 100%)',
-              border: '1.5px solid rgba(107,72,255,0.35)',
-              borderRadius: '14px',
-              padding: '16px 14px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '10px',
-            }}
-          >
-            <div>
-              <p style={{
-                fontFamily: 'var(--font-bangers)',
-                fontSize: 'clamp(20px, 5vw, 26px)',
-                color: '#e8c84a',
-                letterSpacing: '0.06em',
-                lineHeight: 1.1,
-                textShadow: '2px 2px 0 rgba(0,0,0,0.5)',
-                margin: 0,
-              }}>
-                CRIE SUA HISTÓRIA!
-              </p>
-            </div>
-
+        {/* ── Painel de marketing — banner horizontal acima dos livros ── */}
+        <motion.div
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="mb-3"
+          style={{
+            background: 'linear-gradient(135deg, rgba(107,72,255,0.18) 0%, rgba(232,200,74,0.08) 100%)',
+            border: '1.5px solid rgba(107,72,255,0.35)',
+            borderRadius: '14px',
+            padding: '12px 14px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '10px',
+          }}
+        >
+          {/* Texto + bullets */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{
+              fontFamily: 'var(--font-bangers)',
+              fontSize: 'clamp(18px, 5vw, 24px)',
+              color: '#e8c84a',
+              letterSpacing: '0.06em',
+              lineHeight: 1.1,
+              textShadow: '2px 2px 0 rgba(0,0,0,0.5)',
+              margin: '0 0 4px',
+            }}>
+              CRIE SUA HISTÓRIA!
+            </p>
             <p style={{
               fontFamily: 'var(--font-nunito)',
-              fontSize: 'clamp(12px, 3vw, 14px)',
-              color: 'rgba(255,255,255,0.82)',
-              lineHeight: 1.5,
-              margin: 0,
+              fontSize: 'clamp(11px, 2.8vw, 13px)',
+              color: 'rgba(255,255,255,0.78)',
+              lineHeight: 1.45,
+              margin: '0 0 6px',
             }}>
-              Agora você pode criar e publicar suas próprias aventuras em quadrinhos — com personagens animados, diálogos e cenas incríveis.
+              Agora você pode criar e publicar suas próprias aventuras com personagens animados e diálogos.
             </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {[
-                { icon: '✏️', text: 'Edite qualquer livro' },
-                { icon: '🚀', text: 'Publique na hora' },
-                { icon: '❤️', text: 'Receba curtidas' },
-              ].map(item => (
-                <div key={item.text} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ fontSize: '14px' }}>{item.icon}</span>
-                  <span style={{
-                    fontFamily: 'var(--font-nunito)',
-                    fontSize: 'clamp(11px, 2.8vw, 13px)',
-                    color: 'rgba(232,200,74,0.85)',
-                  }}>{item.text}</span>
-                </div>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {['✏️ Edite', '🚀 Publique', '❤️ Curtidas'].map(item => (
+                <span key={item} style={{
+                  fontFamily: 'var(--font-nunito)',
+                  fontSize: 'clamp(10px, 2.5vw, 12px)',
+                  color: 'rgba(232,200,74,0.85)',
+                }}>{item}</span>
               ))}
             </div>
+          </div>
+          {/* CTA */}
+          <Link
+            href="/login"
+            style={{
+              fontFamily: 'var(--font-bangers)',
+              fontSize: 'clamp(13px, 3.5vw, 16px)',
+              letterSpacing: '0.06em',
+              color: '#1a0a2e',
+              background: 'linear-gradient(135deg, #e8c84a 0%, #f5a623 100%)',
+              borderRadius: '20px',
+              padding: '8px 14px',
+              textAlign: 'center',
+              textDecoration: 'none',
+              flexShrink: 0,
+              boxShadow: '0 3px 12px rgba(232,200,74,0.35)',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Começar →
+          </Link>
+        </motion.div>
 
-            <Link
-              href="/login"
-              style={{
-                fontFamily: 'var(--font-bangers)',
-                fontSize: '15px',
-                letterSpacing: '0.06em',
-                color: '#1a0a2e',
-                background: 'linear-gradient(135deg, #e8c84a 0%, #f5a623 100%)',
-                border: 'none',
-                borderRadius: '20px',
-                padding: '8px 14px',
-                textAlign: 'center',
-                textDecoration: 'none',
-                display: 'block',
-                boxShadow: '0 3px 12px rgba(232,200,74,0.35)',
-              }}
-            >
-              Começar agora →
-            </Link>
-          </motion.div>
-
-          {/* ── Book grid — 2 colunas ── */}
-          <div className="flex-1 grid grid-cols-2 gap-3">
+        {/* ── Book grid — 2 colunas ── */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
           {books.map((book, i) => (
             <motion.div
               key={book.id}
@@ -339,8 +329,7 @@ export function BookShelf({ books, videos, isLoggedIn, username, visitStats }: B
               </div>
             </motion.div>
           ))}
-          </div>{/* end book grid */}
-        </div>{/* end flex marketing+books */}
+        </div>{/* end book grid */}
 
         {/* Latest videos */}
         {hasVideos && (

@@ -55,10 +55,10 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
   const [open, setOpen] = useState(false);
   const socialRef = useRef<HTMLDivElement>(null);
 
-  // Abre sidebar automaticamente em desktop
+  // Abre sidebar automaticamente: sempre se logado, ou em desktop
   useEffect(() => {
-    if (publications.length > 0 && window.innerWidth >= 768) setOpen(true);
-  }, [publications.length]);
+    if (publications.length > 0 && (isLoggedIn || window.innerWidth >= 768)) setOpen(true);
+  }, [publications.length, isLoggedIn]);
 
   async function selectPub(pubId: string | null) {
     if (pubId === null) {
