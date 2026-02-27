@@ -60,7 +60,7 @@ export function SpeechBubble({ bubble, index, containerRef, onMove }: SpeechBubb
       whileDrag={{ cursor: 'grabbing', scale: 1.04, zIndex: 50 }}
     >
       <div
-        className="px-2.5 py-1.5 select-none"
+        className="px-2.5 py-1.5 select-none relative"
         style={{
           background: 'rgba(254,254,254,0.96)',
           border: isDraggable ? '2px dashed #e8c84a' : '2px solid #1a1a2e',
@@ -70,6 +70,31 @@ export function SpeechBubble({ bubble, index, containerRef, onMove }: SpeechBubb
             : '2px 3px 0 rgba(0,0,0,0.35)',
         }}
       >
+        {/* Cauda do balão (V) — só no reader, não no editor arrastável */}
+        {!isDraggable && (
+          <>
+            {/* borda da cauda */}
+            <div style={{
+              position: 'absolute',
+              bottom: '-13px',
+              [bubble.position === 'dir' ? 'right' : 'left']: '14px',
+              width: 0, height: 0,
+              borderLeft: '8px solid transparent',
+              borderRight: '8px solid transparent',
+              borderTop: '12px solid #1a1a2e',
+            }} />
+            {/* preenchimento da cauda */}
+            <div style={{
+              position: 'absolute',
+              bottom: '-10px',
+              [bubble.position === 'dir' ? 'right' : 'left']: '16px',
+              width: 0, height: 0,
+              borderLeft: '6px solid transparent',
+              borderRight: '6px solid transparent',
+              borderTop: '10px solid rgba(254,254,254,0.96)',
+            }} />
+          </>
+        )}
         {isDraggable && (
           <div className="flex items-center justify-between mb-0.5">
             <p style={{ fontFamily: 'var(--font-bangers)', fontSize: 'clamp(9px, 2.2vw, 12px)', color: '#1a0a2e', letterSpacing: '0.06em' }}>
