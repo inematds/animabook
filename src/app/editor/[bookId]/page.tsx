@@ -32,9 +32,16 @@ export default async function EditorPage({ params }: Props) {
     .eq('book_id', bookId)
     .single();
 
+  const originalStory = parseStoryMd(bookId);
+
   let story = draft?.content
     ? parseStoryContent(bookId, draft.content)
-    : parseStoryMd(bookId);
+    : originalStory;
+
+  // Se o rascunho tem menos cenas que o original, ignora o rascunho
+  if (draft?.content && story.scenes.length < originalStory.scenes.length) {
+    story = originalStory;
+  }
 
   // Sem cenas: gera a partir das imagens PNG
   if (story.scenes.length === 0) {
