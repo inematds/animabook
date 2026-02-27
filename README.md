@@ -1,6 +1,6 @@
 # Animabook
 
-[![Animabook — estante de livros](doc/preview.png)](https://animabook.vercel.app)
+[![Animabook — estante de livros](doc/preview.jpg)](https://animabook.vercel.app)
 
 **[animabook.vercel.app](https://animabook.vercel.app)**
 
