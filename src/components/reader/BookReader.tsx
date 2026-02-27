@@ -69,22 +69,54 @@ export function BookReader({ story, isDevMode, isLoggedIn = false, publicationMe
           </div>
         )}
 
-        {/* Header */}
+        {/* Header — sticky no topo */}
         <header
-          className="flex items-center justify-between px-3 py-2"
+          className="flex items-center gap-2 px-3 py-2"
           style={{
-            background: 'rgba(10,6,18,0.7)',
-            borderBottom: '1px solid rgba(232,200,74,0.15)',
-            backdropFilter: 'blur(8px)',
+            position: 'sticky',
+            top: 0,
+            zIndex: 50,
+            background: 'rgba(10,6,18,0.9)',
+            borderBottom: '1.5px solid rgba(232,200,74,0.2)',
+            backdropFilter: 'blur(12px)',
           }}
         >
+          {/* Botão Livros */}
+          <Link
+            href="/"
+            className="flex items-center gap-1.5 flex-shrink-0"
+            style={{
+              fontFamily: 'var(--font-bangers)',
+              fontSize: '15px',
+              letterSpacing: '0.05em',
+              color: '#e8c84a',
+              textDecoration: 'none',
+              padding: '5px 12px',
+              borderRadius: '20px',
+              background: 'rgba(232,200,74,0.14)',
+              border: '1.5px solid rgba(232,200,74,0.5)',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            🏠 Livros
+          </Link>
+
+          {/* Título grande */}
           <h1
-            className="text-amber-300 truncate"
-            style={{ fontFamily: 'var(--font-bangers)', fontSize: 'clamp(14px, 4vw, 20px)', letterSpacing: '0.05em', textShadow: '1px 1px 0 #c8a420', flex: 1, margin: 0 }}
+            className="text-amber-300 truncate flex-1"
+            style={{
+              fontFamily: 'var(--font-bangers)',
+              fontSize: 'clamp(18px, 5vw, 28px)',
+              letterSpacing: '0.05em',
+              textShadow: '2px 2px 0 #c8a420',
+              margin: 0,
+              lineHeight: 1.1,
+            }}
           >
             {story.title}
           </h1>
 
+          {/* Contador + editar */}
           <div className="flex items-center gap-2 flex-shrink-0">
             <span className="text-amber-300/60" style={{ fontFamily: 'var(--font-bangers)', fontSize: '13px' }}>
               {index + 1}/{story.scenes.length}
