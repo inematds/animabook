@@ -34,7 +34,7 @@ export function BookReader({ story, isDevMode }: BookReaderProps) {
       <HalftoneBackground />
 
       {/* Conteúdo centralizado e compacto */}
-      <div className="relative z-10 flex flex-col w-full" style={{ maxWidth: '546px' }}>
+      <div className="relative z-10 flex flex-col w-full" style={{ maxWidth: '840px' }}>
 
         {/* Header */}
         <header className="flex items-center justify-between px-3 py-2">
