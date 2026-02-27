@@ -11,11 +11,13 @@ Plataforma web mobile-first para criar, publicar e interagir com histórias em q
 ## Funcionalidades
 
 - **Reader animado** — balões de fala com spring animation, narrador com efeito typewriter, transições entre cenas, swipe para navegar
+- **Sidebar de publicações** — painel lateral na página do livro lista todas as versões publicadas; ao selecionar, a história e o painel social carregam inline
 - **Editor por usuário** — cada usuário tem seu próprio rascunho por livro; salvo no Supabase com Ctrl+S
 - **Balões arrastáveis** — posicione cada balão livremente sobre a imagem
 - **Publicações** — botão "Publicar 🚀" cria versão pública; múltiplas publicações por livro, uma por autor
 - **Likes e comentários** — interações sociais nas publicações (requer login)
 - **Auth completo** — login/registro com email + senha via Supabase Auth
+- **Aspect ratio dinâmico** — suporte a imagens landscape, portrait e square sem distorção
 - **Mobile-first** — layout responsivo, swipe para navegar entre cenas
 
 ---

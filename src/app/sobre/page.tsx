@@ -19,6 +19,7 @@ const steps = [
       'Navegue pelas cenas deslizando ← → ou usando as setas',
       'Cada cena tem imagens, narrador e balões de diálogo animados',
       'Os textos aparecem com efeito typewriter (letra por letra)',
+      'Explore publicações de outros usuários pela barra lateral do livro',
     ],
   },
   {
@@ -45,7 +46,7 @@ const steps = [
     bg: 'rgba(74,222,128,0.07)',
     items: [
       'Clique em "Publicar" para criar uma versão pública do seu rascunho',
-      'Sua publicação aparece na página do livro para todos verem',
+      'Sua publicação aparece na barra lateral da página do livro para todos verem',
       'Você pode ter múltiplas publicações do mesmo livro',
       'Cada publicação é independente — edite o rascunho sem afetar versões anteriores',
     ],

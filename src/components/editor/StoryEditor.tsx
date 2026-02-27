@@ -18,7 +18,8 @@ function storyToMarkdown(story: StoryData): string {
   const lines: string[] = [`# ${story.title}`, ''];
 
   for (const scene of story.scenes) {
-    lines.push(`<!-- scene: ${scene.imageFile} -->`);
+    const dims = scene.width && scene.height ? ` ${scene.width}x${scene.height}` : '';
+    lines.push(`<!-- scene: ${scene.imageFile}${dims} -->`);
     lines.push('');
 
     if (scene.narrator) {

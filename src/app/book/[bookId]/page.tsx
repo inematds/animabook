@@ -35,13 +35,21 @@ export default async function BookPage({ params }: Props) {
       .filter((f: string) => f.toLowerCase().endsWith('.png'))
       .sort();
     if (images.length === 0) notFound();
-    story.scenes = images.map((file: string, index: number) => ({
-      imageFile: file,
-      imageUrl: `/books/${bookId}/${file}`,
-      narrator: '',
-      bubbles: [],
-      index,
-    }));
+    story.scenes = images.map((file: string, index: number) => {
+      let width: number | undefined;
+      let height: number | undefined;
+      try {
+        const buf = Buffer.alloc(24);
+        const imgPath = path.join(bookDir, file);
+        const fd = fs.openSync(imgPath, 'r');
+        fs.readSync(fd, buf, 0, 24, 0);
+        fs.closeSync(fd);
+        const w = buf.readUInt32BE(16);
+        const h = buf.readUInt32BE(20);
+        if (w > 0 && w < 65536 && h > 0 && h < 65536) { width = w; height = h; }
+      } catch { /* ignore */ }
+      return { imageFile: file, imageUrl: `/books/${bookId}/${file}`, narrator: '', bubbles: [], index, width, height };
+    });
   }
 
   // Sessão

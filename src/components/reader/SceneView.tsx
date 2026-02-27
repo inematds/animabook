@@ -16,6 +16,13 @@ interface SceneViewProps {
 export function SceneView({ scene, isTransitioning, onBubbleMove }: SceneViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const w = scene.width ?? 1344;
+  const h = scene.height ?? 768;
+  const isPortrait = h > w;
+  // For portrait images, cap width so height stays manageable (~850px)
+  const maxWidth = isPortrait ? `${Math.round(850 * w / h)}px` : '1344px';
+  const aspectRatio = `${w}/${h}`;
+
   return (
     <motion.div
       key={scene.index}
@@ -28,8 +35,8 @@ export function SceneView({ scene, isTransitioning, onBubbleMove }: SceneViewPro
         <NarratorBox text={scene.narrator} sceneKey={scene.index} />
       )}
 
-      <div className="relative w-full mx-auto" style={{ maxWidth: '1344px' }}>
-        <div ref={containerRef} className="relative w-full" style={{ aspectRatio: '7/4' }}>
+      <div className="relative w-full mx-auto" style={{ maxWidth }}>
+        <div ref={containerRef} className="relative w-full" style={{ aspectRatio }}>
           <Image
             src={scene.imageUrl}
             alt={`Cena ${scene.index + 1}`}

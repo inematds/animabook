@@ -12,6 +12,8 @@ export interface Scene {
   narrator: string;
   bubbles: SpeechBubble[];
   index: number;
+  width?: number;
+  height?: number;
 }
 
 export interface StoryData {
