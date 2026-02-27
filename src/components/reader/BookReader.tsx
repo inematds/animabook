@@ -36,7 +36,7 @@ export function BookReader({ story, isDevMode, isLoggedIn = false, publicationMe
 
   return (
     <div
-      className="min-h-dvh flex flex-col items-center justify-start relative overflow-hidden no-select"
+      className="flex flex-col items-center justify-start relative overflow-hidden no-select"
       style={{ background: 'linear-gradient(135deg, #1a0a2e 0%, #0f1a3d 50%, #1a0a2e 100%)' }}
     >
       <HalftoneBackground />
