@@ -1,15 +1,12 @@
-import { parseStoryContent, parseStoryMd } from '@/lib/parseStory';
-import { getBooks } from '@/lib/getBooks';
-import { BookReader } from '@/components/reader/BookReader';
+import { parseStoryMd } from '@/lib/parseStory';
+import { BookPageClient, PubSummary } from '@/components/ui/BookPageClient';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
-import { Publication } from '@/lib/types';
-import { PublicationList } from '@/components/ui/PublicationList';
 
 export const dynamic = 'force-dynamic';
 
-const adminSupabase = createClient(
+const admin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
@@ -21,9 +18,7 @@ interface Props {
 export async function generateMetadata({ params }: Props) {
   const { bookId } = await params;
   const story = parseStoryMd(bookId);
-  return {
-    title: `${story.title} | Animabook`,
-  };
+  return { title: `${story.title} | Animabook` };
 }
 
 export default async function BookPage({ params }: Props) {
@@ -49,49 +44,56 @@ export default async function BookPage({ params }: Props) {
     }));
   }
 
+  // Sessão
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const { data: pubs } = await adminSupabase
+  // Username do usuário logado
+  let username: string | null = null;
+  if (user) {
+    const { data: profile } = await admin
+      .from('profiles').select('username').eq('id', user.id).single();
+    username = profile?.username ?? null;
+  }
+
+  // Publicações — sem join, separado
+  const { data: pubs } = await admin
     .from('publications')
-    .select('id, user_id, book_id, published_at')
+    .select('id, user_id, published_at')
     .eq('book_id', bookId)
     .order('published_at', { ascending: false });
 
   const pubList = pubs ?? [];
-
-  // Busca profiles e contagens em paralelo
   const pubUserIds = [...new Set(pubList.map(p => p.user_id))];
-  const [profilesResult, ...counts] = await Promise.all([
+
+  const [profilesResult, ...likeCounts] = await Promise.all([
     pubUserIds.length > 0
-      ? adminSupabase.from('profiles').select('id, username').in('id', pubUserIds)
-      : Promise.resolve({ data: [] }),
-    ...pubList.flatMap(pub => [
-      adminSupabase.from('likes').select('*', { count: 'exact', head: true }).eq('publication_id', pub.id),
-      adminSupabase.from('comments').select('*', { count: 'exact', head: true }).eq('publication_id', pub.id),
-    ]),
+      ? admin.from('profiles').select('id, username').in('id', pubUserIds)
+      : Promise.resolve({ data: [] as { id: string; username: string }[] }),
+    ...pubList.map(pub =>
+      admin.from('likes').select('*', { count: 'exact', head: true }).eq('publication_id', pub.id)
+    ),
   ]);
 
   const profileMap = Object.fromEntries(
-    ((profilesResult as { data: { id: string; username: string }[] | null }).data ?? []).map(p => [p.id, p.username])
+    (profilesResult.data ?? []).map(p => [p.id, p.username])
   );
 
-  const publications: Publication[] = pubList.map((pub, i) => ({
-    ...pub,
-    content: '',
-    likes_count: (counts[i * 2] as { count: number | null }).count ?? 0,
-    comments_count: (counts[i * 2 + 1] as { count: number | null }).count ?? 0,
-    profiles: { username: profileMap[pub.user_id] ?? 'Usuário' },
+  const publications: PubSummary[] = pubList.map((pub, i) => ({
+    id: pub.id,
+    authorName: profileMap[pub.user_id] ?? 'Usuário',
+    publishedAt: pub.published_at,
+    likesCount: (likeCounts[i] as { count: number | null }).count ?? 0,
   }));
 
   return (
-    <>
-      <BookReader story={story} isDevMode={process.env.NODE_ENV === 'development'} isLoggedIn={!!user} />
-      {publications.length > 0 && (
-        <div style={{ background: 'linear-gradient(135deg, #1a0a2e 0%, #0f1a3d 100%)' }}>
-          <PublicationList publications={publications} bookId={bookId} />
-        </div>
-      )}
-    </>
+    <BookPageClient
+      baseStory={story}
+      publications={publications}
+      isLoggedIn={!!user}
+      userId={user?.id ?? null}
+      username={username}
+      isDevMode={process.env.NODE_ENV === 'development'}
+    />
   );
 }
