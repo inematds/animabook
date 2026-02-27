@@ -152,7 +152,7 @@ export function StoryEditor({ initialStory }: StoryEditorProps) {
             style={{ background: 'linear-gradient(135deg, #1a0a2e 0%, #0f1a3d 100%)' }}
           >
             {scene && (
-              <div style={{ maxWidth: '420px', margin: '0 auto' }}>
+              <div style={{ maxWidth: '900px', margin: '0 auto' }}>
                 <SceneView scene={scene} isTransitioning={false} onBubbleMove={handleBubbleMove} />
               </div>
             )}
