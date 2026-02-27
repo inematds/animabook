@@ -185,10 +185,10 @@ export function StoryEditor({ initialStory, userId: _userId }: StoryEditorProps)
           onPublish={handlePublish}
         />
 
-        <div className="flex flex-1 overflow-hidden flex-col lg:flex-row">
+        <div className="flex flex-col lg:flex-row lg:overflow-hidden lg:flex-1">
           {/* Preview */}
           <div
-            className="flex-1 overflow-y-auto p-2"
+            className="lg:flex-1 lg:overflow-y-auto p-2"
             style={{ background: 'linear-gradient(135deg, #1a0a2e 0%, #0f1a3d 100%)' }}
           >
             {scene && (
@@ -198,13 +198,12 @@ export function StoryEditor({ initialStory, userId: _userId }: StoryEditorProps)
             )}
           </div>
 
-          {/* Editor panel */}
+          {/* Editor panel — mesma altura que o preview no desktop, 45dvh no mobile */}
           <div
-            className="w-full lg:w-72 border-t lg:border-t-0 lg:border-l overflow-y-auto"
+            className="w-full lg:w-72 border-t lg:border-t-0 lg:border-l overflow-y-auto max-h-[45dvh] lg:max-h-none"
             style={{
               borderColor: 'rgba(232,200,74,0.2)',
               background: 'rgba(10,6,18,0.95)',
-              maxHeight: '55dvh',
               minHeight: '200px',
             }}
           >

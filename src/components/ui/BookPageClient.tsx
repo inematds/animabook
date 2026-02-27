@@ -192,35 +192,6 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
                   </button>
                 </div>
 
-                {/* Sinopse do episódio — visível quando "Original" está selecionado */}
-                {selectedId === null && synopsis && (
-                  <div style={{
-                    padding: '10px 12px',
-                    borderBottom: '1px solid rgba(232,200,74,0.15)',
-                    flexShrink: 0,
-                  }}>
-                    <p style={{
-                      fontFamily: 'var(--font-bangers)',
-                      fontSize: '10px',
-                      letterSpacing: '0.08em',
-                      color: 'rgba(232,200,74,0.45)',
-                      margin: '0 0 5px',
-                    }}>
-                      SOBRE O EPISÓDIO
-                    </p>
-                    <p style={{
-                      fontFamily: 'var(--font-nunito)',
-                      fontSize: '11px',
-                      lineHeight: 1.5,
-                      color: 'rgba(245,240,232,0.6)',
-                      margin: 0,
-                      whiteSpace: 'pre-wrap',
-                    }}>
-                      {synopsis}
-                    </p>
-                  </div>
-                )}
-
                 {/* Lista de publicações */}
                 <div style={{ flex: 1, padding: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   {publications.map((pub, i) => {
@@ -311,10 +282,45 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
           : undefined}
       />
 
-      {/* ───── Social (likes + comentários) ───── */}
-      <AnimatePresence>
-        {selectedId && (
+      {/* ───── Social (likes + comentários) ou Sinopse do Original ───── */}
+      <AnimatePresence mode="wait">
+        {!selectedId && synopsis ? (
           <motion.div
+            key="synopsis"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            style={{
+              background: 'linear-gradient(135deg, #1a0a2e 0%, #0f1a3d 100%)',
+              padding: '28px 16px 52px',
+              borderTop: '1px solid rgba(232,200,74,0.15)',
+            }}
+          >
+            <div style={{ maxWidth: '840px', margin: '0 auto' }}>
+              <p style={{
+                fontFamily: 'var(--font-bangers)',
+                fontSize: '13px',
+                letterSpacing: '0.1em',
+                color: 'rgba(232,200,74,0.5)',
+                margin: '0 0 10px',
+              }}>
+                SOBRE ESTE EPISÓDIO
+              </p>
+              <p style={{
+                fontFamily: 'var(--font-nunito)',
+                fontSize: '15px',
+                lineHeight: 1.7,
+                color: 'rgba(245,240,232,0.75)',
+                margin: 0,
+                whiteSpace: 'pre-wrap',
+              }}>
+                {synopsis}
+              </p>
+            </div>
+          </motion.div>
+        ) : selectedId ? (
+          <motion.div
+            key="social"
             ref={socialRef}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -354,7 +360,7 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
               ) : null}
             </div>
           </motion.div>
-        )}
+        ) : null}
       </AnimatePresence>
     </div>
   );

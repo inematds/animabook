@@ -60,7 +60,7 @@ export function BookShelf({ books, videos, isLoggedIn, username, visitStats }: B
 
   return (
     <div
-      className="min-h-dvh flex flex-col items-center justify-center relative overflow-hidden px-3 py-5"
+      className="min-h-dvh flex flex-col relative overflow-hidden"
       style={{ background: 'linear-gradient(135deg, #1a0a2e 0%, #0f1a3d 50%, #1a0a2e 100%)' }}
     >
       {/* Decorative circles */}
@@ -69,105 +69,131 @@ export function BookShelf({ books, videos, isLoggedIn, username, visitStats }: B
       <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full opacity-10 pointer-events-none"
         style={{ background: 'radial-gradient(circle, #6b48ff, transparent)', transform: 'translate(-30%, 30%)' }} />
 
-      <div className="w-full max-w-lg">
+      {/* ── Topo fixo: título + stats + auth ── */}
+      <div
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
+          background: 'rgba(10,6,18,0.88)',
+          borderBottom: '1.5px solid rgba(232,200,74,0.2)',
+          backdropFilter: 'blur(12px)',
+        }}
+      >
+        <div style={{ maxWidth: '640px', margin: '0 auto', padding: '8px 14px' }}>
 
-        {/* Login/logout bar */}
-        <div className="flex justify-end mb-3">
-          {isLoggedIn ? (
-            <div className="flex items-center gap-2">
-              <span style={{ fontFamily: 'var(--font-nunito)', fontSize: '12px', color: 'rgba(232,200,74,0.7)' }}>
-                {username}
-              </span>
-              <button
-                onClick={handleLogout}
+          {/* Linha 1: título + auth */}
+          <div className="flex items-center justify-between">
+            <motion.div
+              initial={{ opacity: 0, x: -16 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <h1
                 style={{
                   fontFamily: 'var(--font-bangers)',
-                  fontSize: '12px',
-                  letterSpacing: '0.05em',
-                  color: 'rgba(248,113,113,0.8)',
-                  background: 'rgba(248,113,113,0.1)',
-                  border: '1px solid rgba(248,113,113,0.3)',
-                  borderRadius: '20px',
-                  padding: '3px 10px',
-                  cursor: 'pointer',
+                  fontSize: 'clamp(28px, 8vw, 42px)',
+                  color: 'var(--comic-yellow)',
+                  textShadow: '3px 3px 0 var(--comic-shadow)',
+                  letterSpacing: '0.08em',
+                  lineHeight: 1,
+                  margin: 0,
                 }}
               >
-                Sair
-              </button>
-            </div>
-          ) : (
-            <Link
-              href="/login"
-              style={{
-                fontFamily: 'var(--font-bangers)',
-                fontSize: '13px',
-                letterSpacing: '0.05em',
-                color: '#e8c84a',
-                textDecoration: 'none',
-                padding: '4px 12px',
-                borderRadius: '20px',
-                background: 'rgba(232,200,74,0.12)',
-                border: '1.5px solid rgba(232,200,74,0.4)',
-              }}
-            >
-              Entrar / Criar conta
-            </Link>
-          )}
-        </div>
+                ANIMABOOK
+              </h1>
+              <span style={{
+                fontFamily: 'var(--font-nunito)',
+                fontSize: '10px',
+                color: 'rgba(232,200,74,0.4)',
+                letterSpacing: '0.04em',
+              }}>
+                v2.0.0
+              </span>
+            </motion.div>
 
-        {/* Title */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-4"
-        >
-          <h1
-            style={{
-              fontFamily: 'var(--font-bangers)',
-              fontSize: 'clamp(36px, 10vw, 52px)',
-              color: 'var(--comic-yellow)',
-              textShadow: '3px 3px 0 var(--comic-shadow)',
-              letterSpacing: '0.08em',
-              lineHeight: 1,
-            }}
+            {/* Auth */}
+            {isLoggedIn ? (
+              <div className="flex items-center gap-2">
+                <span style={{ fontFamily: 'var(--font-nunito)', fontSize: '12px', color: 'rgba(232,200,74,0.7)' }}>
+                  {username}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  style={{
+                    fontFamily: 'var(--font-bangers)',
+                    fontSize: '12px',
+                    letterSpacing: '0.05em',
+                    color: 'rgba(248,113,113,0.8)',
+                    background: 'rgba(248,113,113,0.1)',
+                    border: '1px solid rgba(248,113,113,0.3)',
+                    borderRadius: '20px',
+                    padding: '3px 10px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Sair
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                style={{
+                  fontFamily: 'var(--font-bangers)',
+                  fontSize: '13px',
+                  letterSpacing: '0.05em',
+                  color: '#e8c84a',
+                  textDecoration: 'none',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  background: 'rgba(232,200,74,0.12)',
+                  border: '1.5px solid rgba(232,200,74,0.4)',
+                }}
+              >
+                Entrar / Criar conta
+              </Link>
+            )}
+          </div>
+
+          {/* Linha 2: stats + subtítulo */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="flex items-center gap-2 flex-wrap mt-1"
           >
-            ANIMABOOK
-          </h1>
-          <p style={{ fontFamily: 'var(--font-nunito)', fontSize: '12px', color: 'rgba(255,200,100,0.6)', marginTop: '4px' }}>
-            Escolha um livro para começar!
-          </p>
-        </motion.div>
-
-        {/* Visit stats chips */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="flex items-center justify-center gap-2 flex-wrap mb-4"
-        >
-          {[
-            { label: `👁 ${visitStats.total.toLocaleString('pt-BR')} acessos`, bg: 'rgba(232,200,74,0.12)', border: 'rgba(232,200,74,0.35)', color: '#e8c84a' },
-            { label: `🔑 ${visitStats.uniqueLogged.toLocaleString('pt-BR')} logados`, bg: 'rgba(107,72,255,0.15)', border: 'rgba(107,72,255,0.4)', color: '#a78bfa' },
-            { label: `👤 ${visitStats.uniqueAnon.toLocaleString('pt-BR')} anônimos`, bg: 'rgba(56,189,248,0.12)', border: 'rgba(56,189,248,0.35)', color: '#7dd3fc' },
-          ].map(chip => (
-            <span
-              key={chip.label}
-              style={{
-                fontFamily: 'var(--font-bangers)',
-                fontSize: '12px',
-                letterSpacing: '0.05em',
-                color: chip.color,
-                background: chip.bg,
-                border: `1px solid ${chip.border}`,
-                borderRadius: '20px',
-                padding: '2px 10px',
-              }}
-            >
-              {chip.label}
+            <span style={{ fontFamily: 'var(--font-nunito)', fontSize: '11px', color: 'rgba(255,200,100,0.45)', marginRight: '2px' }}>
+              Escolha um livro:
             </span>
-          ))}
-        </motion.div>
+            {[
+              { label: `👁 ${visitStats.total.toLocaleString('pt-BR')}`, bg: 'rgba(232,200,74,0.1)', border: 'rgba(232,200,74,0.3)', color: '#e8c84a', title: 'acessos' },
+              { label: `🔑 ${visitStats.uniqueLogged.toLocaleString('pt-BR')}`, bg: 'rgba(107,72,255,0.12)', border: 'rgba(107,72,255,0.35)', color: '#a78bfa', title: 'logados' },
+              { label: `👤 ${visitStats.uniqueAnon.toLocaleString('pt-BR')}`, bg: 'rgba(56,189,248,0.1)', border: 'rgba(56,189,248,0.3)', color: '#7dd3fc', title: 'anônimos' },
+            ].map(chip => (
+              <span
+                key={chip.label}
+                title={chip.title}
+                style={{
+                  fontFamily: 'var(--font-bangers)',
+                  fontSize: '11px',
+                  letterSpacing: '0.05em',
+                  color: chip.color,
+                  background: chip.bg,
+                  border: `1px solid ${chip.border}`,
+                  borderRadius: '20px',
+                  padding: '1px 8px',
+                }}
+              >
+                {chip.label}
+              </span>
+            ))}
+          </motion.div>
+
+        </div>
+      </div>
+
+      {/* ── Conteúdo principal ── */}
+      <div className="w-full max-w-lg mx-auto px-3 py-5 flex-1 relative z-10">
 
         {/* Book grid — 2 colunas sempre */}
         <div className="grid grid-cols-2 gap-3 mb-4">
@@ -292,17 +318,23 @@ export function BookShelf({ books, videos, isLoggedIn, username, visitStats }: B
           Deslize ← → para navegar entre as cenas
         </p>
 
-        <div className="text-center mt-2">
+        <div className="flex justify-center mt-4 mb-2">
           <Link
             href="/sobre"
             style={{
-              fontFamily: 'var(--font-nunito)',
-              fontSize: '11px',
-              color: 'rgba(232,200,74,0.45)',
+              fontFamily: 'var(--font-bangers)',
+              fontSize: '18px',
+              letterSpacing: '0.06em',
+              color: '#e8c84a',
               textDecoration: 'none',
+              padding: '10px 28px',
+              borderRadius: '28px',
+              background: 'rgba(232,200,74,0.12)',
+              border: '2px solid rgba(232,200,74,0.45)',
+              display: 'inline-block',
             }}
           >
-            Como funciona?
+            Como funciona? →
           </Link>
         </div>
       </div>

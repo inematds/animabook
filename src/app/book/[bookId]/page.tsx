@@ -79,22 +79,34 @@ export default async function BookPage({ params }: Props) {
   const pubList = pubs ?? [];
   const pubUserIds = [...new Set(pubList.map(p => p.user_id))];
 
-  const [profilesResult, ...likeCounts] = await Promise.all([
+  const [profilesResult, authUsersResult, ...likeCounts] = await Promise.all([
     pubUserIds.length > 0
       ? admin.from('profiles').select('id, username').in('id', pubUserIds)
       : Promise.resolve({ data: [] as { id: string; username: string }[] }),
+    // Fallback: busca username do user_metadata quando profile não existe
+    pubUserIds.length > 0
+      ? admin.auth.admin.listUsers({ perPage: 1000 })
+      : Promise.resolve({ data: { users: [] } }),
     ...pubList.map(pub =>
       admin.from('likes').select('*', { count: 'exact', head: true }).eq('publication_id', pub.id)
     ),
   ]);
 
-  const profileMap = Object.fromEntries(
+  const profileMap: Record<string, string> = Object.fromEntries(
     (profilesResult.data ?? []).map(p => [p.id, p.username])
   );
 
+  // Preenche com user_metadata para quem não tem profile
+  const authUsers = (authUsersResult as { data: { users: { id: string; user_metadata?: { username?: string } }[] } }).data?.users ?? [];
+  for (const au of authUsers) {
+    if (!profileMap[au.id] && au.user_metadata?.username) {
+      profileMap[au.id] = au.user_metadata.username;
+    }
+  }
+
   const publications: PubSummary[] = pubList.map((pub, i) => ({
     id: pub.id,
-    authorName: profileMap[pub.user_id] ?? 'Usuário',
+    authorName: profileMap[pub.user_id] ?? 'Anônimo',
     publishedAt: pub.published_at,
     likesCount: (likeCounts[i] as { count: number | null }).count ?? 0,
   }));

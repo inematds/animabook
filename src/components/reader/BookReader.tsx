@@ -70,29 +70,23 @@ export function BookReader({ story, isDevMode, isLoggedIn = false, publicationMe
         )}
 
         {/* Header */}
-        <header className="flex items-center justify-between px-3 py-2">
-          <Link
-            href="/"
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
-            style={{
-              background: 'rgba(232,200,74,0.18)',
-              border: '1.5px solid rgba(232,200,74,0.55)',
-              textDecoration: 'none',
-            }}
-          >
-            <span style={{ fontSize: '13px' }}>🏠</span>
-            <span style={{ fontFamily: 'var(--font-bangers)', fontSize: '13px', letterSpacing: '0.05em', color: '#e8c84a' }}>Livros</span>
-          </Link>
-
+        <header
+          className="flex items-center justify-between px-3 py-2"
+          style={{
+            background: 'rgba(10,6,18,0.7)',
+            borderBottom: '1px solid rgba(232,200,74,0.15)',
+            backdropFilter: 'blur(8px)',
+          }}
+        >
           <h1
-            className="text-amber-300 truncate max-w-[50%] text-center"
-            style={{ fontFamily: 'var(--font-bangers)', fontSize: '14px', letterSpacing: '0.05em', textShadow: '1px 1px 0 #c8a420' }}
+            className="text-amber-300 truncate"
+            style={{ fontFamily: 'var(--font-bangers)', fontSize: 'clamp(14px, 4vw, 20px)', letterSpacing: '0.05em', textShadow: '1px 1px 0 #c8a420', flex: 1, margin: 0 }}
           >
             {story.title}
           </h1>
 
-          <div className="flex items-center gap-2">
-            <span className="text-amber-300/60" style={{ fontFamily: 'var(--font-bangers)', fontSize: '12px' }}>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <span className="text-amber-300/60" style={{ fontFamily: 'var(--font-bangers)', fontSize: '13px' }}>
               {index + 1}/{story.scenes.length}
             </span>
             {isLoggedIn && !publicationMeta && (
@@ -101,10 +95,10 @@ export function BookReader({ story, isDevMode, isLoggedIn = false, publicationMe
                 className="flex items-center justify-center rounded-full"
                 title="Editar história"
                 style={{
-                  width: '26px', height: '26px',
+                  width: '28px', height: '28px',
                   background: 'rgba(232,200,74,0.2)',
                   border: '1.5px solid rgba(232,200,74,0.5)',
-                  fontSize: '13px',
+                  fontSize: '14px',
                 }}
               >
                 ✏️
@@ -187,6 +181,51 @@ export function BookReader({ story, isDevMode, isLoggedIn = false, publicationMe
 
         {/* Progress dots */}
         <ProgressDots total={story.scenes.length} current={index} onDotClick={goTo} />
+
+        {/* Navegação principal — grande e clara */}
+        <div
+          className="flex items-center justify-center gap-3 px-4 py-4"
+          style={{ borderTop: '1px solid rgba(232,200,74,0.12)', marginTop: '4px' }}
+        >
+          <Link
+            href="/"
+            className="flex items-center gap-2"
+            style={{
+              fontFamily: 'var(--font-bangers)',
+              fontSize: '18px',
+              letterSpacing: '0.06em',
+              color: '#e8c84a',
+              textDecoration: 'none',
+              padding: '10px 22px',
+              borderRadius: '28px',
+              background: 'rgba(232,200,74,0.14)',
+              border: '2px solid rgba(232,200,74,0.5)',
+            }}
+          >
+            🏠 Livros
+          </Link>
+
+          {!isFirst && (
+            <motion.button
+              onClick={() => goTo(0)}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-2"
+              style={{
+                fontFamily: 'var(--font-bangers)',
+                fontSize: '18px',
+                letterSpacing: '0.06em',
+                color: 'rgba(245,240,232,0.8)',
+                padding: '10px 22px',
+                borderRadius: '28px',
+                background: 'rgba(255,255,255,0.07)',
+                border: '2px solid rgba(255,255,255,0.2)',
+                cursor: 'pointer',
+              }}
+            >
+              ⏮ Início
+            </motion.button>
+          )}
+        </div>
       </div>
     </div>
   );
