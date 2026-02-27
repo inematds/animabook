@@ -3,22 +3,54 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { BookInfo } from '@/lib/types';
 import { LatestVideo } from '@/lib/youtube';
 import { bookCoverVariants } from '@/lib/animationVariants';
 import { YouTubeCard } from './YouTubeCard';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 
+interface VisitStats {
+  total: number;
+  uniqueLogged: number;
+  uniqueAnon: number;
+}
+
 interface BookShelfProps {
   books: BookInfo[];
   videos: (LatestVideo | null)[];
   isLoggedIn: boolean;
   username: string | null;
+  visitStats: VisitStats;
 }
 
-export function BookShelf({ books, videos, isLoggedIn, username }: BookShelfProps) {
+export function BookShelf({ books, videos, isLoggedIn, username, visitStats }: BookShelfProps) {
   const hasVideos = videos.some(v => v !== null);
   const router = useRouter();
+
+  useEffect(() => {
+    async function trackVisit() {
+      let sid = localStorage.getItem('animabook_sid');
+      if (!sid) {
+        sid = crypto.randomUUID();
+        localStorage.setItem('animabook_sid', sid);
+      }
+
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      const supabase = createSupabaseBrowserClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`;
+      }
+
+      await fetch('/api/visit', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ session_id: sid }),
+      });
+    }
+    trackVisit();
+  }, []);
 
   async function handleLogout() {
     const supabase = createSupabaseBrowserClient();
@@ -105,6 +137,36 @@ export function BookShelf({ books, videos, isLoggedIn, username }: BookShelfProp
           <p style={{ fontFamily: 'var(--font-nunito)', fontSize: '12px', color: 'rgba(255,200,100,0.6)', marginTop: '4px' }}>
             Escolha um livro para começar!
           </p>
+        </motion.div>
+
+        {/* Visit stats chips */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="flex items-center justify-center gap-2 flex-wrap mb-4"
+        >
+          {[
+            { label: `👁 ${visitStats.total.toLocaleString('pt-BR')} acessos`, bg: 'rgba(232,200,74,0.12)', border: 'rgba(232,200,74,0.35)', color: '#e8c84a' },
+            { label: `🔑 ${visitStats.uniqueLogged.toLocaleString('pt-BR')} logados`, bg: 'rgba(107,72,255,0.15)', border: 'rgba(107,72,255,0.4)', color: '#a78bfa' },
+            { label: `👤 ${visitStats.uniqueAnon.toLocaleString('pt-BR')} anônimos`, bg: 'rgba(56,189,248,0.12)', border: 'rgba(56,189,248,0.35)', color: '#7dd3fc' },
+          ].map(chip => (
+            <span
+              key={chip.label}
+              style={{
+                fontFamily: 'var(--font-bangers)',
+                fontSize: '12px',
+                letterSpacing: '0.05em',
+                color: chip.color,
+                background: chip.bg,
+                border: `1px solid ${chip.border}`,
+                borderRadius: '20px',
+                padding: '2px 10px',
+              }}
+            >
+              {chip.label}
+            </span>
+          ))}
         </motion.div>
 
         {/* Book grid — 2 colunas sempre */}
