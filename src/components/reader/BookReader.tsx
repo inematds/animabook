@@ -34,12 +34,21 @@ export function BookReader({ story, isDevMode }: BookReaderProps) {
       <HalftoneBackground />
 
       {/* Conteúdo centralizado e compacto */}
-      <div className="relative z-10 flex flex-col w-full" style={{ maxWidth: '420px' }}>
+      <div className="relative z-10 flex flex-col w-full" style={{ maxWidth: '546px' }}>
 
         {/* Header */}
         <header className="flex items-center justify-between px-3 py-2">
-          <Link href="/" className="text-amber-300 flex items-center gap-1">
-            <span style={{ fontFamily: 'var(--font-bangers)', fontSize: '13px', letterSpacing: '0.05em' }}>← Voltar</span>
+          <Link
+            href="/"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
+            style={{
+              background: 'rgba(232,200,74,0.18)',
+              border: '1.5px solid rgba(232,200,74,0.55)',
+              textDecoration: 'none',
+            }}
+          >
+            <span style={{ fontSize: '13px' }}>🏠</span>
+            <span style={{ fontFamily: 'var(--font-bangers)', fontSize: '13px', letterSpacing: '0.05em', color: '#e8c84a' }}>Livros</span>
           </Link>
 
           <h1
