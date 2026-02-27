@@ -157,12 +157,59 @@ export function BookShelf({ books }: BookShelfProps) {
         </div>
       )}
 
-      {/* Footer */}
+      {/* YouTube links */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7, duration: 0.5 }}
+        className="mt-10 flex flex-col sm:flex-row items-center gap-3"
+      >
+        <p
+          className="text-white/40 text-xs mb-1 sm:mb-0 sm:mr-2"
+          style={{ fontFamily: 'var(--font-nunito)' }}
+        >
+          Nossos canais:
+        </p>
+        {[
+          { href: 'https://www.youtube.com/@inemagamer', label: '@inemagamer' },
+          { href: 'https://www.youtube.com/@inematdsx', label: '@inematdsx' },
+        ].map((channel, i) => (
+          <motion.a
+            key={channel.href}
+            href={channel.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.8 + i * 0.1 }}
+            whileHover={{ scale: 1.06, y: -2 }}
+            whileTap={{ scale: 0.96 }}
+            className="flex items-center gap-2 px-4 py-2 rounded-full"
+            style={{
+              background: 'rgba(255,0,0,0.15)',
+              border: '2px solid rgba(255,60,60,0.5)',
+              color: '#ff6b6b',
+              fontFamily: 'var(--font-bangers)',
+              fontSize: '15px',
+              letterSpacing: '0.04em',
+              textDecoration: 'none',
+              boxShadow: '0 2px 12px rgba(255,0,0,0.15)',
+            }}
+          >
+            {/* YouTube icon */}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+            {channel.label}
+          </motion.a>
+        ))}
+      </motion.div>
+
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
-        className="mt-10 text-xs text-white/30"
+        transition={{ delay: 1 }}
+        className="mt-4 text-xs text-white/20"
         style={{ fontFamily: 'var(--font-nunito)' }}
       >
         Deslize ← → para navegar entre as cenas
