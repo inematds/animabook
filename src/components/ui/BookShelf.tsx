@@ -195,8 +195,8 @@ export function BookShelf({ books, videos, isLoggedIn, username, visitStats }: B
       {/* ── Conteúdo principal ── */}
       <div className="w-full max-w-lg mx-auto px-3 py-5 flex-1 relative z-10">
 
-        {/* ── Painel de marketing — banner horizontal acima dos livros ── */}
-        <motion.div
+        {/* ── Painel de marketing — só para visitantes não logados ── */}
+        {!isLoggedIn && <motion.div
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15 }}
@@ -264,7 +264,7 @@ export function BookShelf({ books, videos, isLoggedIn, username, visitStats }: B
           >
             Começar →
           </Link>
-        </motion.div>
+        </motion.div>}
 
         {/* ── Book grid — 2 colunas ── */}
         <div className="grid grid-cols-2 gap-3 mb-4">

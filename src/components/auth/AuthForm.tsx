@@ -50,8 +50,17 @@ export function AuthForm({ next = '/' }: AuthFormProps) {
       return;
     }
 
+    // Tenta login automático após criação
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
-    setMessage('Conta criada! Verifique seu email para confirmar.');
+    if (signInError) {
+      // Email confirmation ainda ativa — vai para aba de login
+      setTab('login');
+      setMessage('Conta criada! Faça login para continuar.');
+    } else {
+      router.push(next);
+      router.refresh();
+    }
   }
 
   const inputStyle: React.CSSProperties = {
@@ -127,6 +136,11 @@ export function AuthForm({ next = '/' }: AuthFormProps) {
             {error && (
               <p style={{ color: '#f87171', fontFamily: 'var(--font-nunito)', fontSize: '13px', margin: 0 }}>
                 {error}
+              </p>
+            )}
+            {message && (
+              <p style={{ color: '#4ade80', fontFamily: 'var(--font-nunito)', fontSize: '13px', margin: 0 }}>
+                {message}
               </p>
             )}
             <motion.button
