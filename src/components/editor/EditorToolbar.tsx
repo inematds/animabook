@@ -8,9 +8,11 @@ interface EditorToolbarProps {
   currentScene: number;
   totalScenes: number;
   saveStatus: SaveStatus;
+  publishing: boolean;
   onPrev: () => void;
   onNext: () => void;
   onSave: () => void;
+  onPublish: () => void;
 }
 
 const statusConfig: Record<SaveStatus, { label: string; color: string }> = {
@@ -25,9 +27,11 @@ export function EditorToolbar({
   currentScene,
   totalScenes,
   saveStatus,
+  publishing,
   onPrev,
   onNext,
   onSave,
+  onPublish,
 }: EditorToolbarProps) {
   const status = statusConfig[saveStatus];
 
@@ -85,7 +89,7 @@ export function EditorToolbar({
         </button>
       </div>
 
-      {/* Save button + status */}
+      {/* Save + Publish buttons */}
       <div className="flex items-center gap-3">
         <span
           className="text-xs"
@@ -110,6 +114,24 @@ export function EditorToolbar({
           }}
         >
           Salvar
+        </motion.button>
+
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={onPublish}
+          disabled={publishing || saveStatus === 'saving'}
+          className="px-4 py-2 rounded-lg font-bold text-sm disabled:opacity-50"
+          style={{
+            background: publishing ? 'rgba(74,222,128,0.3)' : '#4ade80',
+            color: '#1a1a2e',
+            fontFamily: 'var(--font-bangers)',
+            fontSize: '15px',
+            letterSpacing: '0.05em',
+            border: '2px solid #16a34a',
+          }}
+        >
+          {publishing ? '⏳' : '🚀 Publicar'}
         </motion.button>
       </div>
     </div>

@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-import { supabase } from '@/lib/supabase';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
 
 interface RouteParams {
   params: Promise<{ bookId: string }>;
@@ -9,19 +7,25 @@ interface RouteParams {
 
 export async function GET(_req: NextRequest, { params }: RouteParams) {
   const { bookId } = await params;
+  const supabase = await createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  // Tenta Supabase primeiro
-  const { data } = await supabase
-    .from('stories')
-    .select('content')
-    .eq('book_id', bookId)
-    .single();
+  if (user) {
+    const { data: draft } = await supabase
+      .from('drafts')
+      .select('content')
+      .eq('user_id', user.id)
+      .eq('book_id', bookId)
+      .single();
 
-  if (data?.content) {
-    return NextResponse.json({ content: data.content });
+    if (draft?.content) {
+      return NextResponse.json({ content: draft.content });
+    }
   }
 
   // Fallback: arquivo local
+  const fs = await import('fs');
+  const path = await import('path');
   const filePath = path.join(process.cwd(), 'books', bookId, 'story.md');
   const content = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '';
   return NextResponse.json({ content });
@@ -29,6 +33,13 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
 
 export async function POST(req: NextRequest, { params }: RouteParams) {
   const { bookId } = await params;
+  const supabase = await createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
+  }
+
   const { content } = await req.json();
 
   if (typeof content !== 'string') {
@@ -36,8 +47,11 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
   }
 
   const { error } = await supabase
-    .from('stories')
-    .upsert({ book_id: bookId, content });
+    .from('drafts')
+    .upsert(
+      { user_id: user.id, book_id: bookId, content, updated_at: new Date().toISOString() },
+      { onConflict: 'user_id,book_id' }
+    );
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

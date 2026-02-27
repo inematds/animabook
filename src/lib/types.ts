@@ -28,3 +28,30 @@ export interface BookInfo {
 }
 
 export type TransitionDirection = 'next' | 'prev';
+
+export interface UserProfile {
+  id: string;
+  username: string;
+  created_at: string;
+}
+
+export interface Publication {
+  id: string;
+  user_id: string;
+  book_id: string;
+  content: string;
+  published_at: string;
+  profiles?: { username: string };
+  likes_count?: number;
+  comments_count?: number;
+  user_liked?: boolean;
+}
+
+export interface Comment {
+  id: string;
+  user_id: string;
+  publication_id: string;
+  text: string;
+  created_at: string;
+  profiles?: { username: string };
+}

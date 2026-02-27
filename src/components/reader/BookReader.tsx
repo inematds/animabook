@@ -9,12 +9,20 @@ import { ProgressDots } from '../ui/ProgressDots';
 import { useSceneState } from '@/hooks/useSceneState';
 import { useSwipe } from '@/hooks/useSwipe';
 
+interface PublicationMeta {
+  author: string;
+  bookId: string;
+  publicationId: string;
+}
+
 interface BookReaderProps {
   story: StoryData;
   isDevMode: boolean;
+  isLoggedIn?: boolean;
+  publicationMeta?: PublicationMeta;
 }
 
-export function BookReader({ story, isDevMode }: BookReaderProps) {
+export function BookReader({ story, isDevMode, isLoggedIn = false, publicationMeta }: BookReaderProps) {
   const { index, isTransitioning, isFirst, isLast, goNext, goPrev, goTo } =
     useSceneState(story.scenes.length);
 
@@ -35,6 +43,31 @@ export function BookReader({ story, isDevMode }: BookReaderProps) {
 
       {/* Conteúdo centralizado e compacto */}
       <div className="relative z-10 flex flex-col w-full" style={{ maxWidth: '840px' }}>
+
+        {/* Subtítulo de publicação (autor) */}
+        {publicationMeta && (
+          <div className="flex items-center gap-2 px-3 pt-2" style={{ flexWrap: 'wrap' }}>
+            <Link
+              href={`/book/${publicationMeta.bookId}`}
+              style={{
+                fontFamily: 'var(--font-bangers)',
+                fontSize: '12px',
+                letterSpacing: '0.05em',
+                color: '#e8c84a',
+                textDecoration: 'none',
+                padding: '3px 8px',
+                borderRadius: '20px',
+                background: 'rgba(232,200,74,0.12)',
+                border: '1px solid rgba(232,200,74,0.35)',
+              }}
+            >
+              ← {publicationMeta.bookId}
+            </Link>
+            <span style={{ fontFamily: 'var(--font-nunito)', fontSize: '12px', color: 'rgba(245,240,232,0.5)' }}>
+              por <strong style={{ color: '#e8c84a' }}>{publicationMeta.author}</strong>
+            </span>
+          </div>
+        )}
 
         {/* Header */}
         <header className="flex items-center justify-between px-3 py-2">
@@ -62,19 +95,21 @@ export function BookReader({ story, isDevMode }: BookReaderProps) {
             <span className="text-amber-300/60" style={{ fontFamily: 'var(--font-bangers)', fontSize: '12px' }}>
               {index + 1}/{story.scenes.length}
             </span>
-            <Link
-              href={`/editor/${story.bookId}`}
-              className="flex items-center justify-center rounded-full"
-              title="Editar história"
-              style={{
-                width: '26px', height: '26px',
-                background: 'rgba(232,200,74,0.2)',
-                border: '1.5px solid rgba(232,200,74,0.5)',
-                fontSize: '13px',
-              }}
-            >
-              ✏️
-            </Link>
+            {isLoggedIn && !publicationMeta && (
+              <Link
+                href={`/editor/${story.bookId}`}
+                className="flex items-center justify-center rounded-full"
+                title="Editar história"
+                style={{
+                  width: '26px', height: '26px',
+                  background: 'rgba(232,200,74,0.2)',
+                  border: '1.5px solid rgba(232,200,74,0.5)',
+                  fontSize: '13px',
+                }}
+              >
+                ✏️
+              </Link>
+            )}
           </div>
         </header>
 

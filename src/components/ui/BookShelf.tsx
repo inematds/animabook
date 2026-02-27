@@ -2,18 +2,29 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { BookInfo } from '@/lib/types';
 import { LatestVideo } from '@/lib/youtube';
 import { bookCoverVariants } from '@/lib/animationVariants';
 import { YouTubeCard } from './YouTubeCard';
+import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 
 interface BookShelfProps {
   books: BookInfo[];
   videos: (LatestVideo | null)[];
+  isLoggedIn: boolean;
+  username: string | null;
 }
 
-export function BookShelf({ books, videos }: BookShelfProps) {
+export function BookShelf({ books, videos, isLoggedIn, username }: BookShelfProps) {
   const hasVideos = videos.some(v => v !== null);
+  const router = useRouter();
+
+  async function handleLogout() {
+    const supabase = createSupabaseBrowserClient();
+    await supabase.auth.signOut();
+    router.refresh();
+  }
 
   return (
     <div
@@ -27,6 +38,51 @@ export function BookShelf({ books, videos }: BookShelfProps) {
         style={{ background: 'radial-gradient(circle, #6b48ff, transparent)', transform: 'translate(-30%, 30%)' }} />
 
       <div className="w-full max-w-lg">
+
+        {/* Login/logout bar */}
+        <div className="flex justify-end mb-3">
+          {isLoggedIn ? (
+            <div className="flex items-center gap-2">
+              <span style={{ fontFamily: 'var(--font-nunito)', fontSize: '12px', color: 'rgba(232,200,74,0.7)' }}>
+                {username}
+              </span>
+              <button
+                onClick={handleLogout}
+                style={{
+                  fontFamily: 'var(--font-bangers)',
+                  fontSize: '12px',
+                  letterSpacing: '0.05em',
+                  color: 'rgba(248,113,113,0.8)',
+                  background: 'rgba(248,113,113,0.1)',
+                  border: '1px solid rgba(248,113,113,0.3)',
+                  borderRadius: '20px',
+                  padding: '3px 10px',
+                  cursor: 'pointer',
+                }}
+              >
+                Sair
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              style={{
+                fontFamily: 'var(--font-bangers)',
+                fontSize: '13px',
+                letterSpacing: '0.05em',
+                color: '#e8c84a',
+                textDecoration: 'none',
+                padding: '4px 12px',
+                borderRadius: '20px',
+                background: 'rgba(232,200,74,0.12)',
+                border: '1.5px solid rgba(232,200,74,0.4)',
+              }}
+            >
+              Entrar / Criar conta
+            </Link>
+          )}
+        </div>
+
         {/* Title */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -95,20 +151,22 @@ export function BookShelf({ books, videos }: BookShelfProps) {
                     </div>
                   </motion.div>
                 </Link>
-                {/* Botão editar */}
-                <Link
-                  href={`/editor/${book.id}`}
-                  className="absolute bottom-8 right-1.5 flex items-center justify-center rounded-full z-10"
-                  style={{
-                    width: '24px', height: '24px',
-                    background: 'rgba(10,6,18,0.85)',
-                    border: '1.5px solid rgba(232,200,74,0.6)',
-                    fontSize: '12px',
-                  }}
-                  title="Editar"
-                >
-                  ✏️
-                </Link>
+                {/* Botão editar — só para usuários logados */}
+                {isLoggedIn && (
+                  <Link
+                    href={`/editor/${book.id}`}
+                    className="absolute bottom-8 right-1.5 flex items-center justify-center rounded-full z-10"
+                    style={{
+                      width: '24px', height: '24px',
+                      background: 'rgba(10,6,18,0.85)',
+                      border: '1.5px solid rgba(232,200,74,0.6)',
+                      fontSize: '12px',
+                    }}
+                    title="Editar"
+                  >
+                    ✏️
+                  </Link>
+                )}
               </div>
             </motion.div>
           ))}
@@ -171,6 +229,20 @@ export function BookShelf({ books, videos }: BookShelfProps) {
         <p className="text-center mt-3" style={{ fontFamily: 'var(--font-nunito)', fontSize: '10px', color: 'rgba(255,255,255,0.15)' }}>
           Deslize ← → para navegar entre as cenas
         </p>
+
+        <div className="text-center mt-2">
+          <Link
+            href="/sobre"
+            style={{
+              fontFamily: 'var(--font-nunito)',
+              fontSize: '11px',
+              color: 'rgba(232,200,74,0.45)',
+              textDecoration: 'none',
+            }}
+          >
+            Como funciona?
+          </Link>
+        </div>
       </div>
     </div>
   );

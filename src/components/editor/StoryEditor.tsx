@@ -1,6 +1,7 @@
 'use client';
 import { useState, useCallback, useEffect } from 'react';
-import { StoryData, Scene, SpeechBubble } from '@/lib/types';
+import { useRouter } from 'next/navigation';
+import { StoryData, Scene } from '@/lib/types';
 import { SceneEditorPanel } from './SceneEditorPanel';
 import { EditorToolbar } from './EditorToolbar';
 import { SceneView } from '../reader/SceneView';
@@ -10,6 +11,7 @@ type SaveStatus = 'saved' | 'saving' | 'unsaved' | 'error';
 
 interface StoryEditorProps {
   initialStory: StoryData;
+  userId: string;
 }
 
 function storyToMarkdown(story: StoryData): string {
@@ -37,10 +39,12 @@ function storyToMarkdown(story: StoryData): string {
   return lines.join('\n');
 }
 
-export function StoryEditor({ initialStory }: StoryEditorProps) {
+export function StoryEditor({ initialStory, userId: _userId }: StoryEditorProps) {
+  const router = useRouter();
   const [story, setStory] = useState<StoryData>(initialStory);
   const [currentScene, setCurrentScene] = useState(0);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('saved');
+  const [publishing, setPublishing] = useState(false);
 
   const scene = story.scenes[currentScene];
 
@@ -118,7 +122,20 @@ export function StoryEditor({ initialStory }: StoryEditorProps) {
     }
   }, [story]);
 
-  // Auto-save on Ctrl+S
+  const handlePublish = useCallback(async () => {
+    if (saveStatus === 'unsaved') await handleSave();
+    setPublishing(true);
+    try {
+      const res = await fetch(`/api/story/${story.bookId}/publish`, { method: 'POST' });
+      if (!res.ok) throw new Error('Falha ao publicar');
+      const { id } = await res.json();
+      router.push(`/publication/${id}`);
+    } catch {
+      setPublishing(false);
+      alert('Erro ao publicar. Tente novamente.');
+    }
+  }, [story.bookId, saveStatus, handleSave, router]);
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
@@ -140,9 +157,11 @@ export function StoryEditor({ initialStory }: StoryEditorProps) {
           currentScene={currentScene}
           totalScenes={story.scenes.length}
           saveStatus={saveStatus}
+          publishing={publishing}
           onPrev={() => setCurrentScene(p => Math.max(0, p - 1))}
           onNext={() => setCurrentScene(p => Math.min(story.scenes.length - 1, p + 1))}
           onSave={handleSave}
+          onPublish={handlePublish}
         />
 
         <div className="flex flex-1 overflow-hidden flex-col lg:flex-row">

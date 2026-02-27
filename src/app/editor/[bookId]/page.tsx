@@ -1,8 +1,8 @@
 import { parseStoryContent, parseStoryMd } from '@/lib/parseStory';
 import { getBooks } from '@/lib/getBooks';
 import { StoryEditor } from '@/components/editor/StoryEditor';
-import { supabase } from '@/lib/supabase';
-import { notFound } from 'next/navigation';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
+import { notFound, redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,15 +17,23 @@ export default async function EditorPage({ params }: Props) {
   const book = books.find(b => b.id === bookId);
   if (!book) notFound();
 
-  // Tenta Supabase primeiro
-  const { data } = await supabase
-    .from('stories')
+  const supabase = await createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect(`/login?next=/editor/${bookId}`);
+  }
+
+  // Carrega rascunho do usuário
+  const { data: draft } = await supabase
+    .from('drafts')
     .select('content')
+    .eq('user_id', user.id)
     .eq('book_id', bookId)
     .single();
 
-  let story = data?.content
-    ? parseStoryContent(bookId, data.content)
+  let story = draft?.content
+    ? parseStoryContent(bookId, draft.content)
     : parseStoryMd(bookId);
 
   // Sem cenas: gera a partir das imagens PNG
@@ -45,5 +53,5 @@ export default async function EditorPage({ params }: Props) {
     }));
   }
 
-  return <StoryEditor initialStory={story} />;
+  return <StoryEditor initialStory={story} userId={user.id} />;
 }
