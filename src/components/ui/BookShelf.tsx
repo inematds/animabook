@@ -3,13 +3,16 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { BookInfo } from '@/lib/types';
+import { LatestVideo } from '@/lib/youtube';
 import { bookCoverVariants } from '@/lib/animationVariants';
+import { YouTubeCard } from './YouTubeCard';
 
 interface BookShelfProps {
   books: BookInfo[];
+  videos: (LatestVideo | null)[];
 }
 
-export function BookShelf({ books }: BookShelfProps) {
+export function BookShelf({ books, videos }: BookShelfProps) {
   return (
     <div
       className="min-h-dvh flex flex-col items-center justify-center relative overflow-hidden px-4 py-8"
@@ -155,6 +158,33 @@ export function BookShelf({ books }: BookShelfProps) {
             Nenhum livro encontrado ainda.
           </p>
         </div>
+      )}
+
+      {/* Latest videos */}
+      {videos.some(v => v !== null) && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="mt-10 w-full max-w-4xl"
+        >
+          <p
+            className="text-center mb-4"
+            style={{
+              fontFamily: 'var(--font-bangers)',
+              fontSize: '18px',
+              color: 'rgba(255,255,255,0.5)',
+              letterSpacing: '0.06em',
+            }}
+          >
+            Últimos vídeos
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {videos.map((video, i) =>
+              video ? <YouTubeCard key={video.videoId} video={video} index={i} /> : null
+            )}
+          </div>
+        </motion.div>
       )}
 
       {/* YouTube links */}
