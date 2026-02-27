@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
+import { createClient } from '@supabase/supabase-js';
 import path from 'path';
 import fs from 'fs';
 
@@ -7,8 +8,15 @@ interface RouteParams {
   params: Promise<{ bookId: string }>;
 }
 
+const admin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
 export async function POST(req: NextRequest, { params }: RouteParams) {
   const { bookId } = await params;
+
+  // Verifica autenticação via cookie
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -16,8 +24,8 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
   }
 
-  // Tenta rascunho do usuário primeiro
-  const { data: draft } = await supabase
+  // Lê rascunho via admin (sem RLS)
+  const { data: draft } = await admin
     .from('drafts')
     .select('content')
     .eq('user_id', user.id)
@@ -35,7 +43,8 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: 'Nenhum conteúdo para publicar' }, { status: 404 });
   }
 
-  const { data: publication, error } = await supabase
+  // Insere publicação via admin (sem RLS)
+  const { data: publication, error } = await admin
     .from('publications')
     .insert({ user_id: user.id, book_id: bookId, content })
     .select('id')

@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
+import { createClient } from '@supabase/supabase-js';
 
 interface RouteParams {
   params: Promise<{ bookId: string }>;
 }
+
+const admin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function GET(_req: NextRequest, { params }: RouteParams) {
   const { bookId } = await params;
@@ -11,7 +17,7 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (user) {
-    const { data: draft } = await supabase
+    const { data: draft } = await admin
       .from('drafts')
       .select('content')
       .eq('user_id', user.id)
@@ -46,7 +52,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: 'Conteúdo inválido' }, { status: 400 });
   }
 
-  const { error } = await supabase
+  const { error } = await admin
     .from('drafts')
     .upsert(
       { user_id: user.id, book_id: bookId, content, updated_at: new Date().toISOString() },
