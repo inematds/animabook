@@ -83,9 +83,6 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
     const res = await fetch(`/api/publication/${pubId}`, { headers });
     if (res.ok) setPubData(await res.json());
     setLoading(false);
-
-    // Scroll para a área social após carregar
-    setTimeout(() => socialRef.current?.scrollIntoView({ behavior: 'smooth' }), 300);
   }
 
   const story = pubData?.story ?? baseStory;
@@ -321,7 +318,6 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
         ) : selectedId ? (
           <motion.div
             key="social"
-            ref={socialRef}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
