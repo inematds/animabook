@@ -17,6 +17,7 @@ Plataforma web mobile-first para criar, publicar e interagir com histórias em q
 - **Publicações** — botão "Publicar 🚀" cria versão pública; múltiplas publicações por livro, uma por autor
 - **Likes e comentários** — interações sociais nas publicações (requer login)
 - **Auth completo** — login/registro com email + senha via Supabase Auth
+- **Contador de acessos** — home exibe total de pageviews, visitantes logados e anônimos (via tabela `visits`)
 - **Aspect ratio dinâmico** — suporte a imagens landscape, portrait e square sem distorção
 - **Mobile-first** — layout responsivo, swipe para navegar entre cenas
 
@@ -58,9 +59,11 @@ animabook/
     │   ├── book/[bookId]/         # Reader + lista de publicações
     │   ├── editor/[bookId]/       # Editor (requer login)
     │   ├── publication/[id]/      # Visualiza publicação + likes + comentários
-    │   └── api/story/[bookId]/
-    │       ├── route.ts           # GET/POST rascunho
-    │       └── publish/route.ts   # POST cria publicação
+    │   ├── api/story/[bookId]/
+    │   │   ├── route.ts           # GET/POST rascunho
+    │   │   └── publish/route.ts   # POST cria publicação
+    │   └── api/visit/
+    │       └── route.ts           # POST registra visita (session_id + user_id opcional)
     ├── components/
     │   ├── reader/                # BookReader, SceneView, SpeechBubble, NarratorBox
     │   ├── editor/                # StoryEditor, SceneEditorPanel, EditorToolbar
@@ -89,9 +92,22 @@ drafts        -- user_id, book_id, content   (unique user+book)
 publications  -- user_id, book_id, content, published_at
 likes         -- user_id, publication_id     (PK composta)
 comments      -- user_id, publication_id, text, created_at
+visits        -- session_id, user_id (nullable), created_at
 ```
 
-Todas as tabelas têm RLS habilitada. Leitura de publicações/likes/comentários é pública; escrita requer autenticação.
+Todas as tabelas têm RLS habilitada. Leitura de publicações/likes/comentários é pública; escrita requer autenticação. A tabela `visits` permite insert público (anon); leitura via service role apenas.
+
+```sql
+-- criar tabela visits
+create table visits (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users,
+  session_id text not null,
+  created_at timestamptz default now()
+);
+alter table visits enable row level security;
+create policy "visits insert public" on visits for insert with check (true);
+```
 
 ---
 
