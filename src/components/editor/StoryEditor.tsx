@@ -128,12 +128,12 @@ export function StoryEditor({ initialStory, userId: _userId }: StoryEditorProps)
     setPublishing(true);
     try {
       const res = await fetch(`/api/story/${story.bookId}/publish`, { method: 'POST' });
-      if (!res.ok) throw new Error('Falha ao publicar');
-      const { id } = await res.json();
-      router.push(`/publication/${id}`);
-    } catch {
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+      router.push(`/publication/${json.id}`);
+    } catch (err) {
       setPublishing(false);
-      alert('Erro ao publicar. Tente novamente.');
+      alert('Erro ao publicar: ' + (err instanceof Error ? err.message : String(err)));
     }
   }, [story.bookId, saveStatus, handleSave, router]);
 
