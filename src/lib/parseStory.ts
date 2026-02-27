@@ -52,13 +52,15 @@ export function parseStoryMd(bookId: string): StoryData {
       continue;
     }
 
-    // Speech bubble: [Character@esq]: text  or  [Character@dir]: text
-    const bubbleMatch = trimmed.match(/^\[(.+?)(?:@(esq|dir))?\]:\s*(.+)$/);
+    // Speech bubble: [Character@esq x=0.1 y=0.2]: text
+    const bubbleMatch = trimmed.match(/^\[(.+?)(?:@(esq|dir))?(?:\s+x=([\d.]+))?(?:\s+y=([\d.]+))?\]:\s*(.+)$/);
     if (bubbleMatch) {
       currentBubbles.push({
         character: bubbleMatch[1],
         position: (bubbleMatch[2] as 'esq' | 'dir') ?? 'esq',
-        text: bubbleMatch[3],
+        x: bubbleMatch[3] !== undefined ? parseFloat(bubbleMatch[3]) : undefined,
+        y: bubbleMatch[4] !== undefined ? parseFloat(bubbleMatch[4]) : undefined,
+        text: bubbleMatch[5],
       });
       continue;
     }

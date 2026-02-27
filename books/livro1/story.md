@@ -2,7 +2,16 @@
 
 <!-- scene: Cena_01_Dia_dos_Pets_A_Turma_Chega_co.png -->
 
+> ola tudo bem
+
+[ana@dir]: chegeui
+[andre@esq]: tudo certo
+
 <!-- scene: Cena_02_Maya_Apresenta_Fifi_a_Gatinha.png -->
+
+> é a vez da Maya 
+
+[olha esta é a fifi@esq]: 
 
 <!-- scene: Cena_03_Lumi_Apresenta_Natui_o_Ratinh.png -->
 

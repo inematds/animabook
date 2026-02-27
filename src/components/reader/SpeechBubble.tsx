@@ -1,56 +1,89 @@
 'use client';
+import { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { SpeechBubble as SpeechBubbleType } from '@/lib/types';
 import { bubbleVariants } from '@/lib/animationVariants';
 
+// Posições padrão quando x/y não estão definidos
+const DEFAULTS = [
+  { x: 0.08, y: 0.08 },
+  { x: 0.55, y: 0.18 },
+  { x: 0.06, y: 0.55 },
+  { x: 0.52, y: 0.62 },
+];
+
 interface SpeechBubbleProps {
   bubble: SpeechBubbleType;
   index: number;
+  containerRef?: React.RefObject<HTMLDivElement | null>;
+  onMove?: (index: number, x: number, y: number) => void;
 }
 
-export function SpeechBubble({ bubble, index }: SpeechBubbleProps) {
-  const isRight = bubble.position === 'dir';
+export function SpeechBubble({ bubble, index, containerRef, onMove }: SpeechBubbleProps) {
+  const bubbleRef = useRef<HTMLDivElement>(null);
+  const isDraggable = !!onMove;
+
+  const def = DEFAULTS[index % DEFAULTS.length];
+  const bx = bubble.x ?? def.x;
+  const by = bubble.y ?? def.y;
+
+  const handleDragEnd = () => {
+    if (!bubbleRef.current || !containerRef?.current || !onMove) return;
+    const bRect = bubbleRef.current.getBoundingClientRect();
+    const cRect = containerRef.current.getBoundingClientRect();
+    const newX = Math.max(0, Math.min(1, (bRect.left + bRect.width / 2 - cRect.left) / cRect.width));
+    const newY = Math.max(0, Math.min(1, (bRect.top + bRect.height / 2 - cRect.top) / cRect.height));
+    onMove(index, newX, newY);
+  };
 
   return (
     <motion.div
+      ref={bubbleRef}
       custom={index}
-      variants={bubbleVariants}
-      initial="hidden"
-      animate="visible"
+      variants={isDraggable ? undefined : bubbleVariants}
+      initial={isDraggable ? { opacity: 0, scale: 0.8 } : 'hidden'}
+      animate={isDraggable ? { opacity: 1, scale: 1 } : 'visible'}
       exit="exit"
-      className={`absolute z-20 max-w-[48%] ${
-        isRight ? 'right-2' : 'left-2'
-      }`}
-      style={{ top: `${12 + index * 26}%` }}
+      drag={isDraggable}
+      dragMomentum={false}
+      dragConstraints={containerRef ?? undefined}
+      onDragEnd={handleDragEnd}
+      className="absolute z-20"
+      style={{
+        left: `${bx * 100}%`,
+        top: `${by * 100}%`,
+        transform: 'translate(-50%, -50%)',
+        maxWidth: '46%',
+        cursor: isDraggable ? 'grab' : 'default',
+        touchAction: isDraggable ? 'none' : 'auto',
+      }}
+      whileDrag={{ cursor: 'grabbing', scale: 1.04, zIndex: 50 }}
     >
-      {/* Floating bubble - rounded pill style, no tail */}
       <div
-        className="px-2.5 py-1.5"
+        className="px-2.5 py-1.5 select-none"
         style={{
           background: 'rgba(254,254,254,0.96)',
-          border: '2px solid #1a1a2e',
+          border: isDraggable ? '2px dashed #e8c84a' : '2px solid #1a1a2e',
           borderRadius: '14px',
-          boxShadow: '2px 3px 0 rgba(0,0,0,0.35)',
+          boxShadow: isDraggable
+            ? '0 0 0 1px rgba(232,200,74,0.4), 2px 3px 8px rgba(0,0,0,0.4)'
+            : '2px 3px 0 rgba(0,0,0,0.35)',
         }}
       >
-        <p
-          className="font-bold leading-none mb-1"
-          style={{
-            fontFamily: 'var(--font-bangers)',
-            fontSize: 'clamp(9px, 2.2vw, 12px)',
-            color: '#1a0a2e',
-            letterSpacing: '0.06em',
-          }}
-        >
-          {bubble.character}
-        </p>
-        <p
-          className="leading-tight text-[#1a1a2e]"
-          style={{
-            fontFamily: 'var(--font-nunito)',
-            fontSize: 'clamp(10px, 2.5vw, 13px)',
-          }}
-        >
+        {isDraggable && (
+          <div className="flex items-center justify-between mb-0.5">
+            <p style={{ fontFamily: 'var(--font-bangers)', fontSize: 'clamp(9px, 2.2vw, 12px)', color: '#1a0a2e', letterSpacing: '0.06em' }}>
+              {bubble.character || '…'}
+            </p>
+            <span style={{ fontSize: '9px', color: '#b0a000', marginLeft: '4px' }}>⠿</span>
+          </div>
+        )}
+        {!isDraggable && bubble.character && (
+          <p style={{ fontFamily: 'var(--font-bangers)', fontSize: 'clamp(9px, 2.2vw, 12px)', color: '#1a0a2e', letterSpacing: '0.06em', marginBottom: '2px' }}>
+            {bubble.character}
+          </p>
+        )}
+        <p className="leading-tight text-[#1a1a2e]" style={{ fontFamily: 'var(--font-nunito)', fontSize: 'clamp(10px, 2.5vw, 13px)' }}>
           {bubble.text}
         </p>
       </div>

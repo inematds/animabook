@@ -2,6 +2,8 @@ export interface SpeechBubble {
   character: string;
   text: string;
   position: 'esq' | 'dir';
+  x?: number; // 0–1 fração horizontal relativa ao container
+  y?: number; // 0–1 fração vertical relativa ao container
 }
 
 export interface Scene {

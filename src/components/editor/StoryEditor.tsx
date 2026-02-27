@@ -26,7 +26,9 @@ function storyToMarkdown(story: StoryData): string {
 
     for (const bubble of scene.bubbles) {
       const pos = bubble.position ?? 'esq';
-      lines.push(`[${bubble.character}@${pos}]: ${bubble.text}`);
+      const xPart = bubble.x !== undefined ? ` x=${bubble.x.toFixed(3)}` : '';
+      const yPart = bubble.y !== undefined ? ` y=${bubble.y.toFixed(3)}` : '';
+      lines.push(`[${bubble.character}@${pos}${xPart}${yPart}]: ${bubble.text}`);
     }
 
     if (scene.bubbles.length > 0) lines.push('');
@@ -69,6 +71,15 @@ export function StoryEditor({ initialStory }: StoryEditorProps) {
       updateScene(s => ({
         ...s,
         bubbles: s.bubbles.map((b, i) => (i === index ? { ...b, position } : b)),
+      })),
+    [updateScene]
+  );
+
+  const handleBubbleMove = useCallback(
+    (index: number, x: number, y: number) =>
+      updateScene(s => ({
+        ...s,
+        bubbles: s.bubbles.map((b, i) => (i === index ? { ...b, x, y } : b)),
       })),
     [updateScene]
   );
@@ -142,7 +153,7 @@ export function StoryEditor({ initialStory }: StoryEditorProps) {
           >
             {scene && (
               <div style={{ maxWidth: '420px', margin: '0 auto' }}>
-                <SceneView scene={scene} isTransitioning={false} />
+                <SceneView scene={scene} isTransitioning={false} onBubbleMove={handleBubbleMove} />
               </div>
             )}
           </div>
