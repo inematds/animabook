@@ -39,23 +39,15 @@ export function AuthForm({ next = '/' }: AuthFormProps) {
     setError('');
     setLoading(true);
 
-    const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
+    const { error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { username } },
+    });
     if (signUpError) {
       setLoading(false);
       setError(signUpError.message);
       return;
-    }
-
-    if (data.user) {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({ id: data.user.id, username });
-
-      if (profileError) {
-        setLoading(false);
-        setError(profileError.message);
-        return;
-      }
     }
 
     setLoading(false);
