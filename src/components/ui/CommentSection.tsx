@@ -56,7 +56,7 @@ export function CommentSection({ publicationId, initialComments, userId, usernam
       </h3>
 
       {comments.length === 0 && (
-        <p style={{ fontFamily: 'var(--font-nunito)', color: 'rgba(245,240,232,0.4)', fontSize: '14px', marginBottom: '16px' }}>
+        <p style={{ fontFamily: 'var(--font-nunito)', color: 'rgba(245,240,232,0.4)', fontSize: '16px', marginBottom: '16px' }}>
           Nenhum comentário ainda.
         </p>
       )}
@@ -74,10 +74,10 @@ export function CommentSection({ publicationId, initialComments, userId, usernam
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
               <div>
-                <span style={{ fontFamily: 'var(--font-bangers)', fontSize: '14px', color: '#e8c84a', letterSpacing: '0.05em' }}>
+                <span style={{ fontFamily: 'var(--font-bangers)', fontSize: '16px', color: '#e8c84a', letterSpacing: '0.05em' }}>
                   {c.profiles?.username ?? 'Usuário'}
                 </span>
-                <span style={{ fontFamily: 'var(--font-nunito)', fontSize: '11px', color: 'rgba(245,240,232,0.4)', marginLeft: '8px' }}>
+                <span style={{ fontFamily: 'var(--font-nunito)', fontSize: '13px', color: 'rgba(245,240,232,0.4)', marginLeft: '8px' }}>
                   {new Date(c.created_at).toLocaleDateString('pt-BR')}
                 </span>
               </div>
@@ -98,7 +98,7 @@ export function CommentSection({ publicationId, initialComments, userId, usernam
                 </button>
               )}
             </div>
-            <p style={{ fontFamily: 'var(--font-nunito)', fontSize: '14px', color: '#f5f0e8', margin: '6px 0 0' }}>
+            <p style={{ fontFamily: 'var(--font-nunito)', fontSize: '16px', lineHeight: 1.5, color: '#f5f0e8', margin: '6px 0 0' }}>
               {c.text}
             </p>
           </div>
@@ -121,7 +121,7 @@ export function CommentSection({ publicationId, initialComments, userId, usernam
               background: 'rgba(255,255,255,0.05)',
               color: '#f5f0e8',
               fontFamily: 'var(--font-nunito)',
-              fontSize: '14px',
+              fontSize: '16px',
               outline: 'none',
             }}
           />
@@ -147,7 +147,7 @@ export function CommentSection({ publicationId, initialComments, userId, usernam
           </motion.button>
         </form>
       ) : (
-        <p style={{ fontFamily: 'var(--font-nunito)', color: 'rgba(245,240,232,0.5)', fontSize: '13px' }}>
+        <p style={{ fontFamily: 'var(--font-nunito)', color: 'rgba(245,240,232,0.5)', fontSize: '16px' }}>
           <a href="/login" style={{ color: '#e8c84a' }}>Entre</a> para comentar.
         </p>
       )}

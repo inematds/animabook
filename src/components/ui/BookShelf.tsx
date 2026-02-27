@@ -225,10 +225,10 @@ export function BookShelf({ books, videos, isLoggedIn, username, visitStats }: B
                         style={{ background: 'linear-gradient(to top, rgba(26,10,46,0.88) 0%, transparent 55%)' }} />
                       <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5">
                         <h2 className="text-white leading-tight truncate"
-                          style={{ fontFamily: 'var(--font-bangers)', fontSize: 'clamp(13px, 3.5vw, 17px)', textShadow: '1px 1px 0 rgba(0,0,0,0.8)', letterSpacing: '0.03em' }}>
+                          style={{ fontFamily: 'var(--font-bangers)', fontSize: 'clamp(15px, 4vw, 20px)', textShadow: '1px 1px 0 rgba(0,0,0,0.8)', letterSpacing: '0.03em' }}>
                           {book.title}
                         </h2>
-                        <p style={{ fontFamily: 'var(--font-nunito)', fontSize: '10px', color: 'rgba(232,200,74,0.7)' }}>
+                        <p style={{ fontFamily: 'var(--font-nunito)', fontSize: '12px', color: 'rgba(232,200,74,0.7)' }}>
                           {book.sceneCount} cenas
                         </p>
                       </div>

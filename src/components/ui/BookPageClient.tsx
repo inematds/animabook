@@ -180,7 +180,7 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
                     <span style={{ fontSize: '16px' }}>📖</span>
                     <span style={{
                       fontFamily: 'var(--font-nunito)',
-                      fontSize: '12px',
+                      fontSize: '14px',
                       color: selectedId === null ? '#e8c84a' : 'rgba(245,240,232,0.55)',
                       fontWeight: selectedId === null ? 700 : 400,
                     }}>
@@ -234,7 +234,7 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{
                             fontFamily: 'var(--font-nunito)',
-                            fontSize: '12px',
+                            fontSize: '14px',
                             fontWeight: 700,
                             color: isSelected ? color : '#f5f0e8',
                             whiteSpace: 'nowrap',
@@ -249,11 +249,11 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
                             alignItems: 'center',
                             marginTop: '2px',
                           }}>
-                            <span style={{ fontFamily: 'var(--font-nunito)', fontSize: '10px', color: 'rgba(245,240,232,0.4)' }}>
+                            <span style={{ fontFamily: 'var(--font-nunito)', fontSize: '12px', color: 'rgba(245,240,232,0.4)' }}>
                               {relativeDate(pub.publishedAt)}
                             </span>
                             {pub.likesCount > 0 && (
-                              <span style={{ fontFamily: 'var(--font-nunito)', fontSize: '10px', color: 'rgba(244,63,94,0.7)' }}>
+                              <span style={{ fontFamily: 'var(--font-nunito)', fontSize: '12px', color: 'rgba(244,63,94,0.7)' }}>
                                 ❤️ {pub.likesCount}
                               </span>
                             )}
@@ -305,9 +305,9 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
               </p>
               <p style={{
                 fontFamily: 'var(--font-nunito)',
-                fontSize: '15px',
-                lineHeight: 1.7,
-                color: 'rgba(245,240,232,0.75)',
+                fontSize: '17px',
+                lineHeight: 1.75,
+                color: 'rgba(245,240,232,0.8)',
                 margin: 0,
                 whiteSpace: 'pre-wrap',
               }}>
