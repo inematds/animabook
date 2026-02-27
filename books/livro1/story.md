@@ -9,9 +9,9 @@
 
 <!-- scene: Cena_02_Maya_Apresenta_Fifi_a_Gatinha.png -->
 
-> é a vez da Maya 
+> é a vez da Maya
 
-[olha esta é a fifi@esq]: 
+[maya@dir x=0.187 y=0.108]: esta é a fifi, minha gatinha , ela é incrivel em paz sempre
 
 <!-- scene: Cena_03_Lumi_Apresenta_Natui_o_Ratinh.png -->
 
