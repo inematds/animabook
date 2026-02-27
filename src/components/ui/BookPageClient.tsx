@@ -23,6 +23,7 @@ interface PubData {
 
 interface Props {
   baseStory: StoryData;
+  synopsis: string;
   publications: PubSummary[];
   isLoggedIn: boolean;
   userId: string | null;
@@ -47,7 +48,7 @@ function relativeDate(iso: string) {
 
 const COLORS = ['#e8c84a', '#a78bfa', '#4ade80', '#f43f5e', '#60a5fa', '#fb923c'];
 
-export function BookPageClient({ baseStory, publications, isLoggedIn, userId, username, isDevMode }: Props) {
+export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, userId, username, isDevMode }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [pubData, setPubData] = useState<PubData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -190,6 +191,35 @@ export function BookPageClient({ baseStory, publications, isLoggedIn, userId, us
                     </span>
                   </button>
                 </div>
+
+                {/* Sinopse do episódio — visível quando "Original" está selecionado */}
+                {selectedId === null && synopsis && (
+                  <div style={{
+                    padding: '10px 12px',
+                    borderBottom: '1px solid rgba(232,200,74,0.15)',
+                    flexShrink: 0,
+                  }}>
+                    <p style={{
+                      fontFamily: 'var(--font-bangers)',
+                      fontSize: '10px',
+                      letterSpacing: '0.08em',
+                      color: 'rgba(232,200,74,0.45)',
+                      margin: '0 0 5px',
+                    }}>
+                      SOBRE O EPISÓDIO
+                    </p>
+                    <p style={{
+                      fontFamily: 'var(--font-nunito)',
+                      fontSize: '11px',
+                      lineHeight: 1.5,
+                      color: 'rgba(245,240,232,0.6)',
+                      margin: 0,
+                      whiteSpace: 'pre-wrap',
+                    }}>
+                      {synopsis}
+                    </p>
+                  </div>
+                )}
 
                 {/* Lista de publicações */}
                 <div style={{ flex: 1, padding: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>

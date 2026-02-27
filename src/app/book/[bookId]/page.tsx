@@ -3,6 +3,8 @@ import { BookPageClient, PubSummary } from '@/components/ui/BookPageClient';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
+import fs from 'fs';
+import path from 'path';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,6 +25,9 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function BookPage({ params }: Props) {
   const { bookId } = await params;
+
+  const synopsisPath = path.join(process.cwd(), 'books', bookId, 'synopsis.md');
+  const synopsis = fs.existsSync(synopsisPath) ? fs.readFileSync(synopsisPath, 'utf-8').trim() : '';
 
   let story = parseStoryMd(bookId);
 
@@ -97,6 +102,7 @@ export default async function BookPage({ params }: Props) {
   return (
     <BookPageClient
       baseStory={story}
+      synopsis={synopsis}
       publications={publications}
       isLoggedIn={!!user}
       userId={user?.id ?? null}
