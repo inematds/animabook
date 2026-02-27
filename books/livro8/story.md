@@ -2,7 +2,9 @@
 
 <!-- scene: escola.png -->
 
-> Uma vez por mês, a escola da INETUSX tem o Dia dos Pets. Todo estudante pode trazer seu animal companheiro. Hoje era esse dia.
+> Uma vez por mês, a escola da INETUSX tem o Dia dos Pets. Todo estudante pode trazer seu animal companheiro. Hoje era esse dia especial.
+
+[PIX-Z]: Oito pets confirmados. Todas as coleiras inteligentes ativas. Nenhuma incompatibilidade detectada.
 
 [Maya]: Olha o pátio! Todo mundo chegou com seu pet hoje!
 
@@ -10,94 +12,192 @@
 
 [Valen]: Ale também. Mas ele está bem — a coleira está ativa.
 
-[Caio]: PIX-Z, quantos pets registrados para hoje?
+<!-- scene: vana.png -->
 
-[PIX-Z]: Oito pets confirmados. Todos com coleiras inteligentes modelo 3.2. Nenhuma incompatibilidade de comportamento detectada até o momento.
+> Valen chegou com Ale ao lado — passo a passo, calmo e atento como sempre.
 
-<!-- scene: Coleira_inteligente_de_pet.png -->
+[Valen]: Ale, senta. Bom. Olha esse lugar cheio de gente. Você vai adorar.
 
-> Antes de entrar em sala, a professora mostrou como as coleiras funcionavam — a tecnologia que tornava possível ter oito animais diferentes em harmonia.
+[Caio]: Ele parece mais controlado que você.
 
-[Professora]: As coleiras inteligentes leem o estado emocional do animal em tempo real. Se ele ficar agitado, ansioso ou com instinto de perseguição ativo, a coleira emite um pulso suave que o acalma sem causar nenhuma dor.
+[Valen]: Ele É mais controlado que eu. Eu treino com ele, não o contrário.
 
-[Maya]: E funciona com todos os animais? Até com o sapo?
+<!-- scene: ale.png -->
 
-[Professora]: Até com o Roc. Cada coleira é calibrada para a biologia do animal. A do Roc é diferente da do Ale, por exemplo.
+> Ale. Pastor alemão. Treinado para reconhecer padrões emocionais. Quando alguém da turma está mal, ele sente antes de qualquer pessoa notar.
 
-[Caio]: E se dois animais entrarem em conflito? Tipo um predador e uma presa?
+[Valen]: O que a maioria não sabe sobre o Ale é que ele não precisa de comando verbal. Ele lê o ambiente.
 
-[Professora]: A coleira detecta o nível de tensão antes do conflito acontecer e age preventivamente. É por isso que Fifi e Natui podem estar na mesma sala sem nenhum problema.
+[Lumi]: Ele já foi até mim uma vez durante a prova de física. Ficou do meu lado até eu terminar.
 
-[Lumi]: Uma gata e um ratinho. No mesmo lugar. Em paz.
+[Valen]: Eu sei. Ele me contou à sua maneira.
 
-[Professora]: Tecnologia a serviço dos vínculos. Agora, quem quer começar as apresentações?
+<!-- scene: lumi.png -->
 
-<!-- scene: ChatGPT_Image_24_de_fev._de_2026_23_57_22.png -->
+> Lumi chegou com Neve correndo à frente, puxando levemente a guia com toda a alegria do mundo.
 
-> As apresentações começaram. Cada estudante trouxe seu pet para o centro da sala e contou o que tinha de mais incrível nele.
+[Lumi]: Neve! Devagar! A coleira vai ativar se você continuar assim.
 
-[Maya]: Este aqui é o Natui. Ele é um ratinho cinza com a testa branca e a inteligência de um pequeno engenheiro. Na semana passada ele fugiu do laboratório, construiu um ninho no almoxarifado e teve sete filhotes. Por conta própria.
+[Neve]: ...
 
-[Valen]: Sem avisar ninguém.
+[Lumi]: Tá bom. Só um pouco mais rápido então.
 
-[Maya]: Sem avisar. Ele simplesmente executou o plano dele. Eu amo isso nele.
+<!-- scene: neve.png -->
 
-[Lumi]: Eu trouxe a Fifi. Ela parece uma gata comum mas tem um senso de direção absurdo — ela encontra qualquer pessoa da escola apenas pelo cheiro, mesmo em locais onde nunca esteve.
+> Neve. Cão Maremano. Branca como a neve que deu nome a ela. Enérgica, protetora, e completamente apaixonada por Lumi.
 
-[Caio]: A Fifi já me encontrou três vezes no laboratório de química fechado. Eu ainda não sei como ela entra.
+[Lumi]: Neve nasceu para proteger. É da raça dela. Mas aqui ela aprendeu que proteger também pode ser ficar quietinha do lado enquanto você estuda.
 
-[Fifi]: ...
+[Maya]: Ela fica quieta enquanto você estuda?
 
-[Maya]: Eu acho que ela sabe.
+[Lumi]: Fica. Com a cabeça no meu colo. Não é exatamente silencioso, mas funciona.
 
-<!-- scene: ChatGPT_Image_25_de_fev._de_2026_00_51_04.png -->
+<!-- scene: maya.png -->
 
-[Caio]: O meu pet é o Roc. Ele é um sapo-de-chifres e a maioria das pessoas acha que ele não faz nada. Mas o Roc tem memória visual extraordinária. Ele reconhece rostos — e só deixa quem ele conhece chegar perto.
+> Maya chegou carregando Fifi no colo. A gatinha olhava para tudo com calma absurda, como se já soubesse que era o centro das atenções.
 
-[Valen]: O Roc não deixou eu chegar perto dele por duas semanas.
+[Maya]: Fifi, você vai ser a estrela hoje. Eu sei que você sabe disso.
 
-[Caio]: Você levou duas semanas para conquistar a confiança dele. Isso diz algo sobre o Roc.
+[Valen]: A gata tem ego.
+
+[Maya]: Ela tem consciência. É diferente.
+
+<!-- scene: fifi.png -->
+
+> Fifi. Gatinha listrada. Sentido de direção extraordinário. Já encontrou Maya em qualquer lugar da escola — mesmo em salas onde nunca esteve.
+
+[Maya]: Fifi tem um GPS interno que nenhuma tecnologia conseguiu replicar ainda. Ela encontra qualquer pessoa da escola pelo cheiro, mesmo em lugares novos.
+
+[Caio]: Ela já me encontrou no laboratório de química com a porta fechada.
+
+[Maya]: Três vezes.
+
+[Caio]: Quatro. Uma eu não contei.
+
+<!-- scene: caio.png -->
+
+> Caio chegou por último, com Roc dentro de um terrário de vidro temperado que ele mesmo construiu — ventilado, climatizado, perfeito.
+
+[Caio]: Roc não gosta de multidão. Mas a coleira dele tem sensor de estresse adaptado para anfíbios. Se ele ficar agitado, ela avisa antes.
+
+[Lumi]: Você construiu o terrário?
+
+[Caio]: Ele precisava de temperatura estável. Os disponíveis no mercado têm margem de erro de dois graus. Isso é muito.
+
+<!-- scene: roc.png -->
+
+> Roc. Sapo-de-chifres. Memória visual extraordinária. Reconhece rostos e só deixa quem ele conhece se aproximar.
+
+[Caio]: O que a maioria não sabe sobre o Roc é que ele aprende rostos e não esquece. Ele reconhece cada pessoa da turma individualmente.
+
+[Valen]: Ele demorou duas semanas para me aceitar.
+
+[Caio]: Roc é exigente. Isso diz algo sobre ele.
 
 [Valen]: Ou sobre mim.
 
 [Caio]: Provavelmente os dois.
 
-[Valen]: O Ale é um pastor alemão. O que a maioria não sabe é que ele foi treinado para reconhecer padrões emocionais. Se alguém da turma está mal — ansioso, triste, com medo — o Ale sente antes de qualquer pessoa notar. E vai até lá.
+<!-- scene: Coleira_inteligente_de_pet.png -->
 
-[Lumi]: Ele fez isso comigo na semana da prova de física.
+> Antes das apresentações na sala, a professora mostrou como as coleiras funcionavam para quem ainda não conhecia bem a tecnologia.
 
-[Valen]: Eu sei. Ele me contou.
+[Professora]: As coleiras leem o estado emocional do animal em tempo real. Se ele ficar agitado, o sensor age preventivamente — sem dor, sem susto.
 
-[Lumi]: Os cães não falam.
+[Maya]: E funciona com todos os animais? Até com o sapo?
 
-[Valen]: O Ale me conta de outras formas.
+[Professora]: Cada coleira é calibrada individualmente. A do Roc tem sensores diferentes da do Ale. Até a Piva tem uma — tamanho extra grande.
 
-<!-- scene: ChatGPT_Image_25_de_fev._de_2026_01_53_49.png -->
+[Lumi]: E os filhotes da Piva?
 
-> Depois das apresentações, a turma foi para o pátio. As coleiras estavam ativas e os pets estavam livres.
+[Professora]: Tamanho neonatal. Desenvolvido especialmente para este mês.
 
-[Maya]: Olha a Piva! Ela veio hoje também! Trouxe os filhotes!
+<!-- scene: natui.png -->
 
-[PIX-Z]: Registro: Piva e três filhotes, 47 dias de idade. Todos com coleiras de tamanho neonatal. Comportamento: estável. Nível de felicidade estimado: alto.
+> Natui. O ratinho que planejou a própria fuga semanas atrás. Hoje ele estava de volta — com um status especial.
 
-[Lumi]: Você mede nível de felicidade de capivara?
+[Maya]: Natui é oficialmente o pet mais famoso da escola. Depois do episódio do almoxarifado, todo mundo o conhece.
+
+[PIX-Z]: Natui. Rattus norvegicus. Inteligência acima da média para a espécie. Histórico: fuga planejada, ninho construído, sete filhotes. Status: lendário.
+
+[Lumi]: Ele ficou vermelho se pudesse.
+
+[Maya]: Ratinhos não ficam vermelhos. Mas eu juro que ele entendeu.
+
+<!-- scene: rosinha.png -->
+
+> Rosinha. Porquinha miniatura. Cor-de-rosa, obviamente. Personalidade: barulhenta, carinhosa e completamente sem filtro.
+
+[Lumi]: Rosinha é a pet da Bela, da turma B. Mas todo mundo conhece ela porque ela grunhe quando está feliz — e hoje ela está muito feliz.
+
+[PIX-Z]: Frequência de grunhidos: acima do normal. Análise: excitação social elevada. Conclusão: contente.
+
+[Maya]: Ela concorda com você, PIX-Z.
+
+<!-- scene: piva.png -->
+
+> Piva. A capivara do lago. Hoje ela trouxe os filhotes — os três que a turma encontrou semanas atrás, já maiores e curiosos.
+
+[Maya]: PIVA! Você veio! E trouxe eles!
+
+[PIX-Z]: Piva e três filhotes, 47 dias de vida. Comportamento: estável. Nível de felicidade estimado: elevado.
+
+[Lumi]: Você mede felicidade de capivara?
 
 [PIX-Z]: Estou aprendendo.
 
-[Caio]: Natui e Fifi estão lado a lado ali. Sem nenhum problema.
+<!-- scene: pix-z.png -->
 
-[Maya]: É o que a coleira faz. Mas eu acho que eles também escolheram isso. A tecnologia só deu o espaço — a amizade foi deles.
+> PIX-Z. O assistente robótico da escola. Hoje ele circulava pelo pátio registrando tudo — métricas de comportamento, temperatura, interações.
+
+[PIX-Z]: Observação: nível de coesão do grupo humano-animal acima da média escolar em 340%. Este é o maior índice que já registrei.
+
+[Valen]: PIX-Z, você também é um pet hoje?
+
+[PIX-Z]: Não possuo classificação biológica para tal.
+
+[Maya]: Mas você está aqui com a gente. Isso conta.
+
+[PIX-Z]: ...processando.
+
+<!-- scene: ChatGPT_Image_24_de_fev._de_2026_23_57_22.png -->
+
+> As apresentações na sala de aula foram um sucesso. Cada pet teve seu momento — e cada dono ficou radiante.
+
+[Professora]: Isso foi extraordinário. Cada animal mostrou uma habilidade que complementa a personalidade do dono.
+
+[Caio]: Ou o dono desenvolve a personalidade que complementa o pet.
+
+[Lumi]: Acho que são as duas coisas ao mesmo tempo.
+
+[Valen]: Filosofia de pet. Quem diria.
+
+<!-- scene: ChatGPT_Image_25_de_fev._de_2026_00_51_04.png -->
+
+> Depois das apresentações, a turma foi para o pátio. As coleiras estavam ativas e os pets estavam livres — dentro dos limites seguros.
+
+[Maya]: Olha a Fifi e o Natui. Lado a lado. Em paz.
+
+[Caio]: A coleira faz isso. Neutraliza o instinto de predador.
+
+[Maya]: Talvez. Mas eu acho que eles também escolheram isso. A tecnologia só deu o espaço — a amizade foi deles.
+
+[Lumi]: Como a gente.
+
+<!-- scene: ChatGPT_Image_25_de_fev._de_2026_01_53_49.png -->
+
+> O fim da tarde chegou. Pets cansados, estudantes satisfeitos, e o pátio cheio de histórias para contar.
 
 [Valen]: Ale está deitado ao sol com o Roc do lado. Dois animais que normalmente não seriam amigos.
 
-[Lumi]: Nenhum de nós seria amigo do outro se dependesse de probabilidade estatística.
+[Caio]: Nenhum de nós seria amigo do outro se dependesse de probabilidade estatística.
 
-[Valen]: Verdade.
+[Lumi]: Verdade.
 
-[PIX-Z]: Observação: grupo humano e grupo animal — comportamento de coesão elevado. Nível de vínculo registrado: acima da média escolar em 340%.
+[PIX-Z]: Grupo humano e grupo animal — comportamento de vínculo registrado: o melhor de todos os Dias dos Pets desde que fui ativado.
 
 [Maya]: Isso é bom?
 
 [PIX-Z]: É o melhor que já registrei.
 
-> O pátio estava cheio de animais e estudantes, de sol e barulho, de coleiras piscando e amizades improvadas. Um caos organizado, quente e perfeito.
+> O pátio estava cheio de animais e estudantes, de sol e barulho, de coleiras piscando e amizades impossíveis. Um caos organizado, quente e perfeito.

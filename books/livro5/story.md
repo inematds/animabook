@@ -12,9 +12,25 @@
 
 [Lumi]: Dá pra perceber, né?
 
+<!-- scene: lumi.png -->
+
+> Lumi Byte. Observadora. Empática. Sempre conectando pessoas sem perceber que faz isso.
+
+[Lumi]: Eu estava procurando a sala B3 há vinte minutos. O mapa do tablet não atualiza em tempo real.
+
+[Valen]: Eu conheço o caminho. Vem.
+
+<!-- scene: vana.png -->
+
+> Valen. Determinada. Confiante por fora, sempre calculando por dentro. Não costuma oferecer ajuda — mas quando oferece, é de verdade.
+
+[Valen]: Eu sou Valen. E você estava indo na direção errada, só pra constar.
+
+[Lumi]: Obrigada. Eu sou Lumi.
+
 <!-- scene: cena02.png -->
 
-> A sala estava quase cheia. Lumi hesitou na porta. Havia apenas um lugar vago — ao lado de uma garota que não olhou para cima.
+> A sala estava quase cheia. Lumi hesitou na porta. Havia apenas um lugar vago — ao lado de Valen, que não olhou para cima.
 
 [Lumi]: Você já entendeu essa parte da aula?
 
@@ -26,7 +42,7 @@
 
 <!-- scene: cena03.png -->
 
-> Na fila do refeitório, uma figura estava completamente no próprio mundo — tablet na mão, traços rápidos, completamente alheia ao movimento ao redor.
+> Na fila do refeitório, uma figura estava completamente no próprio mundo — tablet na mão, traços rápidos, alheia ao movimento ao redor.
 
 [Lumi]: Você desenhou isso agora? Na fila?
 
@@ -34,11 +50,19 @@
 
 [Valen]: É um cachorro-robô?
 
-[Maya]: É. Ele parece abandonado... mas não devia estar. Às vezes fico pensando de onde veio.
+[Maya]: É. Ele parece abandonado... mas não devia estar.
+
+<!-- scene: maya.png -->
+
+> Maya Flores. Sensível. Criativa. Transforma tudo o que sente em arte antes mesmo de conseguir colocar em palavras.
+
+[Maya]: Eu sou Maya. Desculpa, eu estava no meu mundo.
+
+[Lumi]: Não precisa pedir desculpa. O desenho é incrível.
 
 <!-- scene: cena04.png -->
 
-> A sala da tarde estava movimentada. Um menino entrou, parou na porta, avaliou a sala com calma e caminhou direto para o único lugar vago.
+> A sala da tarde estava movimentada. Um menino entrou, parou na porta, avaliou tudo com calma e caminhou direto para o único lugar vago.
 
 [Caio]: Está ocupado?
 
@@ -46,7 +70,15 @@
 
 [Lumi]: Você já mexeu nesse sistema antes? A interface parece complicada.
 
-[Caio]: Um pouco... na verdade ele é mais intuitivo do que parece. Você quer que eu mostre?
+[Caio]: Um pouco... ele é mais intuitivo do que parece. Você quer que eu mostre?
+
+<!-- scene: caio.png -->
+
+> Caio Luz. Analítico. Leal. Vê padrões onde outros veem caos. Fala pouco — mas quando fala, vale a pena ouvir.
+
+[Caio]: Eu sou Caio. Desculpa não ter dito antes. Não sou muito de apresentações.
+
+[Valen]: Nem eu. Mas pelo menos você disse.
 
 <!-- scene: cena05.png -->
 
@@ -56,7 +88,7 @@
 
 [Lumi]: Ele... falou com a gente?
 
-[Caio]: PIX-Z. O assistente da sala. Deve ter identificado um grupo ativo nas proximidades.
+[Caio]: PIX-Z. O assistente da sala. Identificou um grupo ativo.
 
 [Valen]: Identificou ou escolheu?
 
