@@ -60,40 +60,56 @@ export function BookShelf({ books, videos }: BookShelfProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: i * 0.1 }}
             >
-              <Link href={`/book/${book.id}`}>
-                <motion.div
-                  variants={bookCoverVariants}
-                  initial="idle"
-                  whileHover="hover"
-                  whileTap="tap"
-                  className="relative overflow-hidden cursor-pointer"
-                  style={{ borderRadius: '10px', border: '2px solid var(--comic-yellow)', boxShadow: '3px 5px 14px rgba(0,0,0,0.5)' }}
+              <div className="relative">
+                <Link href={`/book/${book.id}`}>
+                  <motion.div
+                    variants={bookCoverVariants}
+                    initial="idle"
+                    whileHover="hover"
+                    whileTap="tap"
+                    className="relative overflow-hidden cursor-pointer"
+                    style={{ borderRadius: '10px', border: '2px solid var(--comic-yellow)', boxShadow: '3px 5px 14px rgba(0,0,0,0.5)' }}
+                  >
+                    <div className="relative w-full" style={{ aspectRatio: '7/4' }}>
+                      {book.coverImage ? (
+                        <Image src={book.coverImage} alt={book.title} fill className="object-cover"
+                          sizes="(max-width: 640px) 50vw, 240px" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-3xl" style={{ background: '#0f1a3d' }}>📚</div>
+                      )}
+                      <div className="absolute inset-0"
+                        style={{ background: 'linear-gradient(to top, rgba(26,10,46,0.88) 0%, transparent 55%)' }} />
+                      <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5">
+                        <h2 className="text-white leading-tight truncate"
+                          style={{ fontFamily: 'var(--font-bangers)', fontSize: 'clamp(13px, 3.5vw, 17px)', textShadow: '1px 1px 0 rgba(0,0,0,0.8)', letterSpacing: '0.03em' }}>
+                          {book.title}
+                        </h2>
+                        <p style={{ fontFamily: 'var(--font-nunito)', fontSize: '10px', color: 'rgba(232,200,74,0.7)' }}>
+                          {book.sceneCount} cenas
+                        </p>
+                      </div>
+                      <div className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full flex items-center justify-center text-xs"
+                        style={{ background: 'var(--comic-yellow)', border: '1.5px solid #1a1a2e', fontSize: '9px' }}>
+                        ▶
+                      </div>
+                    </div>
+                  </motion.div>
+                </Link>
+                {/* Botão editar */}
+                <Link
+                  href={`/editor/${book.id}`}
+                  className="absolute bottom-8 right-1.5 flex items-center justify-center rounded-full z-10"
+                  style={{
+                    width: '24px', height: '24px',
+                    background: 'rgba(10,6,18,0.85)',
+                    border: '1.5px solid rgba(232,200,74,0.6)',
+                    fontSize: '12px',
+                  }}
+                  title="Editar"
                 >
-                  <div className="relative w-full" style={{ aspectRatio: '7/4' }}>
-                    {book.coverImage ? (
-                      <Image src={book.coverImage} alt={book.title} fill className="object-cover"
-                        sizes="(max-width: 640px) 50vw, 240px" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-3xl" style={{ background: '#0f1a3d' }}>📚</div>
-                    )}
-                    <div className="absolute inset-0"
-                      style={{ background: 'linear-gradient(to top, rgba(26,10,46,0.88) 0%, transparent 55%)' }} />
-                    <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5">
-                      <h2 className="text-white leading-tight truncate"
-                        style={{ fontFamily: 'var(--font-bangers)', fontSize: 'clamp(13px, 3.5vw, 17px)', textShadow: '1px 1px 0 rgba(0,0,0,0.8)', letterSpacing: '0.03em' }}>
-                        {book.title}
-                      </h2>
-                      <p style={{ fontFamily: 'var(--font-nunito)', fontSize: '10px', color: 'rgba(232,200,74,0.7)' }}>
-                        {book.sceneCount} cenas
-                      </p>
-                    </div>
-                    <div className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full flex items-center justify-center text-xs"
-                      style={{ background: 'var(--comic-yellow)', border: '1.5px solid #1a1a2e', fontSize: '9px' }}>
-                      ▶
-                    </div>
-                  </div>
-                </motion.div>
-              </Link>
+                  ✏️
+                </Link>
+              </div>
             </motion.div>
           ))}
         </div>

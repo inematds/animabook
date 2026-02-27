@@ -62,21 +62,19 @@ export function BookReader({ story, isDevMode }: BookReaderProps) {
             <span className="text-amber-300/60" style={{ fontFamily: 'var(--font-bangers)', fontSize: '12px' }}>
               {index + 1}/{story.scenes.length}
             </span>
-            {isDevMode && (
-              <Link
-                href={`/editor/${story.bookId}`}
-                className="flex items-center justify-center rounded-full"
-                title="Editar história"
-                style={{
-                  width: '26px', height: '26px',
-                  background: 'rgba(232,200,74,0.2)',
-                  border: '1.5px solid rgba(232,200,74,0.5)',
-                  fontSize: '13px',
-                }}
-              >
-                ✏️
-              </Link>
-            )}
+            <Link
+              href={`/editor/${story.bookId}`}
+              className="flex items-center justify-center rounded-full"
+              title="Editar história"
+              style={{
+                width: '26px', height: '26px',
+                background: 'rgba(232,200,74,0.2)',
+                border: '1.5px solid rgba(232,200,74,0.5)',
+                fontSize: '13px',
+              }}
+            >
+              ✏️
+            </Link>
           </div>
         </header>
 
