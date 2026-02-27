@@ -110,20 +110,45 @@ export function BookReader({ story, isDevMode }: BookReaderProps) {
             )}
 
             {/* Setas de navegação */}
-            {!isFirst && (
-              <motion.button whileTap={{ scale: 0.9 }} onClick={goPrev} disabled={isTransitioning}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-40 flex items-center justify-center disabled:opacity-30"
-                style={{ width: '32px', height: '48px', background: 'rgba(26,10,46,0.6)', borderRadius: '0 8px 8px 0', color: '#e8c84a', fontSize: '20px', backdropFilter: 'blur(4px)' }}>
-                ‹
-              </motion.button>
-            )}
-            {!isLast && (
-              <motion.button whileTap={{ scale: 0.9 }} onClick={goNext} disabled={isTransitioning}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-40 flex items-center justify-center disabled:opacity-30"
-                style={{ width: '32px', height: '48px', background: 'rgba(26,10,46,0.6)', borderRadius: '8px 0 0 8px', color: '#e8c84a', fontSize: '20px', backdropFilter: 'blur(4px)' }}>
-                ›
-              </motion.button>
-            )}
+            <motion.button
+              onClick={goPrev}
+              disabled={isFirst || isTransitioning}
+              whileHover={{ scale: 1.08, x: -2 }}
+              whileTap={{ scale: 0.93 }}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center justify-center gap-0.5 disabled:opacity-0 disabled:pointer-events-none transition-opacity"
+              style={{
+                width: '44px', height: '72px',
+                background: 'linear-gradient(135deg, rgba(232,200,74,0.22), rgba(180,140,20,0.12))',
+                borderRadius: '0 16px 16px 0',
+                border: '2px solid rgba(232,200,74,0.45)',
+                borderLeft: 'none',
+                backdropFilter: 'blur(8px)',
+                boxShadow: '4px 0 16px rgba(0,0,0,0.4)',
+              }}
+            >
+              <span style={{ color: '#e8c84a', fontSize: '28px', lineHeight: 1, textShadow: '0 0 8px rgba(232,200,74,0.6)' }}>❮</span>
+              <span style={{ color: 'rgba(232,200,74,0.6)', fontSize: '9px', fontFamily: 'var(--font-bangers)', letterSpacing: '0.05em' }}>ANT</span>
+            </motion.button>
+
+            <motion.button
+              onClick={goNext}
+              disabled={isLast || isTransitioning}
+              whileHover={{ scale: 1.08, x: 2 }}
+              whileTap={{ scale: 0.93 }}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center justify-center gap-0.5 disabled:opacity-0 disabled:pointer-events-none transition-opacity"
+              style={{
+                width: '44px', height: '72px',
+                background: 'linear-gradient(225deg, rgba(232,200,74,0.22), rgba(180,140,20,0.12))',
+                borderRadius: '16px 0 0 16px',
+                border: '2px solid rgba(232,200,74,0.45)',
+                borderRight: 'none',
+                backdropFilter: 'blur(8px)',
+                boxShadow: '-4px 0 16px rgba(0,0,0,0.4)',
+              }}
+            >
+              <span style={{ color: '#e8c84a', fontSize: '28px', lineHeight: 1, textShadow: '0 0 8px rgba(232,200,74,0.6)' }}>❯</span>
+              <span style={{ color: 'rgba(232,200,74,0.6)', fontSize: '9px', fontFamily: 'var(--font-bangers)', letterSpacing: '0.05em' }}>PRX</span>
+            </motion.button>
           </div>
         )}
 
