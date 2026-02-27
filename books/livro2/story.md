@@ -2,6 +2,10 @@
 
 <!-- scene: Cena_01_Dia_dos_Pets_A_Turma_Chega_co.png -->
 
+[ana@esq x=0.330 y=0.255]: sim estou feliz
+[@esq]: 
+[@esq]: 
+
 <!-- scene: Cena_02_Maya_Apresenta_Fifi_a_Gatinha.png -->
 
 <!-- scene: Cena_03_Lumi_Apresenta_Natui_o_Ratinh.png -->
