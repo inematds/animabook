@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { createClient } from '@supabase/supabase-js';
 
 interface RouteParams {
@@ -11,10 +10,17 @@ const admin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-export async function GET(_req: NextRequest, { params }: RouteParams) {
+async function getUserFromRequest(req: NextRequest) {
+  const auth = req.headers.get('Authorization');
+  const token = auth?.replace('Bearer ', '').trim();
+  if (!token) return null;
+  const { data: { user } } = await admin.auth.getUser(token);
+  return user ?? null;
+}
+
+export async function GET(req: NextRequest, { params }: RouteParams) {
   const { bookId } = await params;
-  const supabase = await createSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getUserFromRequest(req);
 
   if (user) {
     const { data: draft } = await admin
@@ -29,7 +35,6 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
     }
   }
 
-  // Fallback: arquivo local
   const fs = await import('fs');
   const path = await import('path');
   const filePath = path.join(process.cwd(), 'books', bookId, 'story.md');
@@ -39,15 +44,13 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
 
 export async function POST(req: NextRequest, { params }: RouteParams) {
   const { bookId } = await params;
-  const supabase = await createSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getUserFromRequest(req);
 
   if (!user) {
     return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
   }
 
   const { content } = await req.json();
-
   if (typeof content !== 'string') {
     return NextResponse.json({ error: 'Conteúdo inválido' }, { status: 400 });
   }

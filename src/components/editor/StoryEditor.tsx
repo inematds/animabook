@@ -106,13 +106,24 @@ export function StoryEditor({ initialStory, userId: _userId }: StoryEditorProps)
     [updateScene]
   );
 
+  const getToken = useCallback(async (): Promise<string | null> => {
+    const { createSupabaseBrowserClient } = await import('@/lib/supabase-browser');
+    const sb = createSupabaseBrowserClient();
+    const { data: { session } } = await sb.auth.getSession();
+    return session?.access_token ?? null;
+  }, []);
+
   const handleSave = useCallback(async () => {
     setSaveStatus('saving');
     try {
       const content = storyToMarkdown(story);
+      const token = await getToken();
       const res = await fetch(`/api/story/${story.bookId}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ content }),
       });
       if (!res.ok) throw new Error('Falha ao salvar');
@@ -120,14 +131,22 @@ export function StoryEditor({ initialStory, userId: _userId }: StoryEditorProps)
     } catch {
       setSaveStatus('error');
     }
-  }, [story]);
+  }, [story, getToken]);
 
   const handlePublish = useCallback(async () => {
-    // Sempre salva antes de publicar para garantir que o rascunho existe no banco
-    await handleSave();
     setPublishing(true);
     try {
-      const res = await fetch(`/api/story/${story.bookId}/publish`, { method: 'POST' });
+      const content = storyToMarkdown(story);
+      const token = await getToken();
+      if (!token) throw new Error('Não autenticado');
+      const res = await fetch(`/api/story/${story.bookId}/publish`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ content }),
+      });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
       router.push(`/publication/${json.id}`);
@@ -135,7 +154,7 @@ export function StoryEditor({ initialStory, userId: _userId }: StoryEditorProps)
       setPublishing(false);
       alert('Erro ao publicar: ' + (err instanceof Error ? err.message : String(err)));
     }
-  }, [story.bookId, saveStatus, handleSave, router]);
+  }, [story, getToken, router]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
