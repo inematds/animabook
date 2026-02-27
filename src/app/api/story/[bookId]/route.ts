@@ -68,3 +68,20 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
 
   return NextResponse.json({ ok: true });
 }
+
+export async function DELETE(req: NextRequest, { params }: RouteParams) {
+  const { bookId } = await params;
+  const user = await getUserFromRequest(req);
+
+  if (!user) {
+    return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
+  }
+
+  await admin
+    .from('drafts')
+    .delete()
+    .eq('user_id', user.id)
+    .eq('book_id', bookId);
+
+  return NextResponse.json({ ok: true });
+}

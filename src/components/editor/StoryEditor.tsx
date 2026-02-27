@@ -134,6 +134,20 @@ export function StoryEditor({ initialStory, userId: _userId }: StoryEditorProps)
     }
   }, [story, getToken]);
 
+  const handleReset = useCallback(async () => {
+    try {
+      const token = await getToken();
+      // Deleta o rascunho do Supabase para este livro
+      await fetch(`/api/story/${story.bookId}`, {
+        method: 'DELETE',
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      });
+    } catch {
+      // ignora erro de rede, recarrega mesmo assim
+    }
+    router.refresh();
+  }, [story.bookId, getToken, router]);
+
   const handlePublish = useCallback(async () => {
     setPublishing(true);
     try {
@@ -183,6 +197,7 @@ export function StoryEditor({ initialStory, userId: _userId }: StoryEditorProps)
           onNext={() => setCurrentScene(p => Math.min(story.scenes.length - 1, p + 1))}
           onSave={handleSave}
           onPublish={handlePublish}
+          onReset={handleReset}
         />
 
         <div className="flex flex-col lg:flex-row lg:overflow-hidden lg:flex-1">

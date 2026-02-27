@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 type SaveStatus = 'saved' | 'saving' | 'unsaved' | 'error';
@@ -13,6 +14,7 @@ interface EditorToolbarProps {
   onNext: () => void;
   onSave: () => void;
   onPublish: () => void;
+  onReset: () => void;
 }
 
 const statusConfig: Record<SaveStatus, { label: string; color: string }> = {
@@ -32,6 +34,7 @@ export function EditorToolbar({
   onNext,
   onSave,
   onPublish,
+  onReset,
 }: EditorToolbarProps) {
   const status = statusConfig[saveStatus];
 
@@ -43,13 +46,29 @@ export function EditorToolbar({
         borderBottom: '2px solid rgba(232,200,74,0.3)',
       }}
     >
-      {/* Book ID */}
-      <div>
+      {/* Sair + Book ID */}
+      <div className="flex items-center gap-2">
+        <Link
+          href={`/book/${bookId}`}
+          style={{
+            fontFamily: 'var(--font-bangers)',
+            fontSize: '14px',
+            letterSpacing: '0.05em',
+            color: 'rgba(245,240,232,0.7)',
+            textDecoration: 'none',
+            padding: '4px 10px',
+            borderRadius: '8px',
+            border: '1.5px solid rgba(255,255,255,0.2)',
+            background: 'rgba(255,255,255,0.05)',
+          }}
+        >
+          ← Sair
+        </Link>
         <span
           className="text-amber-300 font-bold"
           style={{ fontFamily: 'var(--font-bangers)', fontSize: '18px', letterSpacing: '0.05em' }}
         >
-          Editor: {bookId}
+          {bookId}
         </span>
       </div>
 
@@ -89,8 +108,27 @@ export function EditorToolbar({
         </button>
       </div>
 
-      {/* Save + Publish buttons */}
+      {/* Reset + Save + Publish buttons */}
       <div className="flex items-center gap-3">
+        <button
+          onClick={() => {
+            if (confirm('Descartar seu rascunho e recarregar do original?')) onReset();
+          }}
+          title="Reiniciar do original"
+          style={{
+            fontFamily: 'var(--font-bangers)',
+            fontSize: '13px',
+            letterSpacing: '0.05em',
+            color: 'rgba(248,113,113,0.8)',
+            background: 'rgba(248,113,113,0.1)',
+            border: '1.5px solid rgba(248,113,113,0.3)',
+            borderRadius: '8px',
+            padding: '4px 10px',
+            cursor: 'pointer',
+          }}
+        >
+          ↺ Original
+        </button>
         <span
           className="text-xs"
           style={{ color: status.color, fontFamily: 'var(--font-nunito)' }}
