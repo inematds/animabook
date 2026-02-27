@@ -29,7 +29,7 @@ export function NarratorBox({ text, sceneKey }: NarratorBoxProps) {
             className="text-[#1a1a2e] leading-snug"
             style={{
               fontFamily: 'var(--font-nunito)',
-              fontSize: 'clamp(12px, 3vw, 14px)',
+              fontSize: 'clamp(15px, 4vw, 18px)',
               minHeight: '1.2em',
             }}
           >

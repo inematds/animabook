@@ -53,7 +53,7 @@ export function SpeechBubble({ bubble, index, containerRef, onMove }: SpeechBubb
         left: `${bx * 100}%`,
         top: `${by * 100}%`,
         transform: 'translate(-50%, -50%)',
-        maxWidth: '46%',
+        maxWidth: '52%',
         cursor: isDraggable ? 'grab' : 'default',
         touchAction: isDraggable ? 'none' : 'auto',
       }}
@@ -97,18 +97,18 @@ export function SpeechBubble({ bubble, index, containerRef, onMove }: SpeechBubb
         )}
         {isDraggable && (
           <div className="flex items-center justify-between mb-0.5">
-            <p style={{ fontFamily: 'var(--font-bangers)', fontSize: 'clamp(9px, 2.2vw, 12px)', color: '#1a0a2e', letterSpacing: '0.06em' }}>
+            <p style={{ fontFamily: 'var(--font-bangers)', fontSize: 'clamp(11px, 3vw, 14px)', color: '#1a0a2e', letterSpacing: '0.06em' }}>
               {bubble.character || '…'}
             </p>
             <span style={{ fontSize: '9px', color: '#b0a000', marginLeft: '4px' }}>⠿</span>
           </div>
         )}
         {!isDraggable && bubble.character && (
-          <p style={{ fontFamily: 'var(--font-bangers)', fontSize: 'clamp(9px, 2.2vw, 12px)', color: '#1a0a2e', letterSpacing: '0.06em', marginBottom: '2px' }}>
+          <p style={{ fontFamily: 'var(--font-bangers)', fontSize: 'clamp(11px, 3vw, 14px)', color: '#1a0a2e', letterSpacing: '0.06em', marginBottom: '2px' }}>
             {bubble.character}
           </p>
         )}
-        <p className="leading-tight text-[#1a1a2e]" style={{ fontFamily: 'var(--font-nunito)', fontSize: 'clamp(10px, 2.5vw, 13px)' }}>
+        <p className="leading-tight text-[#1a1a2e]" style={{ fontFamily: 'var(--font-nunito)', fontSize: 'clamp(13px, 3.5vw, 16px)' }}>
           {bubble.text}
         </p>
       </div>
