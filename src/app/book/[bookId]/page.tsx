@@ -1,15 +1,13 @@
-import { parseStoryMd } from '@/lib/parseStory';
+import { parseStoryContent, parseStoryMd } from '@/lib/parseStory';
 import { getBooks } from '@/lib/getBooks';
 import { BookReader } from '@/components/reader/BookReader';
+import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
+
+export const dynamic = 'force-dynamic';
 
 interface Props {
   params: Promise<{ bookId: string }>;
-}
-
-export async function generateStaticParams() {
-  const books = getBooks();
-  return books.map(b => ({ bookId: b.id }));
 }
 
 export async function generateMetadata({ params }: Props) {
@@ -22,9 +20,19 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function BookPage({ params }: Props) {
   const { bookId } = await params;
-  const story = parseStoryMd(bookId);
 
-  // Sem story.md: gera cenas a partir das imagens PNG do livro
+  // Tenta Supabase primeiro
+  const { data } = await supabase
+    .from('stories')
+    .select('content')
+    .eq('book_id', bookId)
+    .single();
+
+  let story = data?.content
+    ? parseStoryContent(bookId, data.content)
+    : parseStoryMd(bookId);
+
+  // Sem cenas: gera a partir das imagens PNG
   if (story.scenes.length === 0) {
     const fs = await import('fs');
     const path = await import('path');

@@ -2,9 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { StoryData, Scene, SpeechBubble } from './types';
 
-export function parseStoryMd(bookId: string): StoryData {
-  const mdPath = path.join(process.cwd(), 'books', bookId, 'story.md');
-  const raw = fs.existsSync(mdPath) ? fs.readFileSync(mdPath, 'utf-8') : '';
+export function parseStoryContent(bookId: string, raw: string): StoryData {
   const lines = raw.split('\n');
 
   let title = bookId;
@@ -30,13 +28,11 @@ export function parseStoryMd(bookId: string): StoryData {
   for (const line of lines) {
     const trimmed = line.trim();
 
-    // Book title (first H1)
     if (trimmed.startsWith('# ') && scenes.length === 0 && !currentScene) {
       title = trimmed.slice(2).trim();
       continue;
     }
 
-    // Scene boundary: <!-- scene: filename.png -->
     const sceneMatch = trimmed.match(/^<!--\s*scene:\s*(.+\.png)\s*-->$/);
     if (sceneMatch) {
       flushScene();
@@ -46,13 +42,11 @@ export function parseStoryMd(bookId: string): StoryData {
 
     if (!currentScene) continue;
 
-    // Narrator blockquote: > text
     if (trimmed.startsWith('> ')) {
       narratorLines.push(trimmed.slice(2));
       continue;
     }
 
-    // Speech bubble: [Character@esq x=0.1 y=0.2]: text
     const bubbleMatch = trimmed.match(/^\[(.+?)(?:@(esq|dir))?(?:\s+x=([\d.]+))?(?:\s+y=([\d.]+))?\]:\s*(.+)$/);
     if (bubbleMatch) {
       currentBubbles.push({
@@ -69,4 +63,10 @@ export function parseStoryMd(bookId: string): StoryData {
   flushScene();
 
   return { bookId, title, scenes };
+}
+
+export function parseStoryMd(bookId: string): StoryData {
+  const mdPath = path.join(process.cwd(), 'books', bookId, 'story.md');
+  const raw = fs.existsSync(mdPath) ? fs.readFileSync(mdPath, 'utf-8') : '';
+  return parseStoryContent(bookId, raw);
 }

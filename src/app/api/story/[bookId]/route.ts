@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { supabase } from '@/lib/supabase';
 
 interface RouteParams {
   params: Promise<{ bookId: string }>;
@@ -8,38 +9,39 @@ interface RouteParams {
 
 export async function GET(_req: NextRequest, { params }: RouteParams) {
   const { bookId } = await params;
-  const filePath = path.join(process.cwd(), 'books', bookId, 'story.md');
 
-  if (!fs.existsSync(filePath)) {
-    return NextResponse.json({ content: '' });
+  // Tenta Supabase primeiro
+  const { data } = await supabase
+    .from('stories')
+    .select('content')
+    .eq('book_id', bookId)
+    .single();
+
+  if (data?.content) {
+    return NextResponse.json({ content: data.content });
   }
 
-  const content = fs.readFileSync(filePath, 'utf-8');
+  // Fallback: arquivo local
+  const filePath = path.join(process.cwd(), 'books', bookId, 'story.md');
+  const content = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '';
   return NextResponse.json({ content });
 }
 
 export async function POST(req: NextRequest, { params }: RouteParams) {
-  if (process.env.NODE_ENV !== 'development') {
-    return NextResponse.json({ error: 'Disponível apenas em desenvolvimento' }, { status: 403 });
-  }
-
   const { bookId } = await params;
-  const filePath = path.join(process.cwd(), 'books', bookId, 'story.md');
-
-  // Safety check: only allow books/ directory
-  const booksDir = path.join(process.cwd(), 'books');
-  if (!filePath.startsWith(booksDir)) {
-    return NextResponse.json({ error: 'Caminho inválido' }, { status: 400 });
-  }
-
   const { content } = await req.json();
 
   if (typeof content !== 'string') {
     return NextResponse.json({ error: 'Conteúdo inválido' }, { status: 400 });
   }
 
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.writeFileSync(filePath, content, 'utf-8');
+  const { error } = await supabase
+    .from('stories')
+    .upsert({ book_id: bookId, content });
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 
   return NextResponse.json({ ok: true });
 }

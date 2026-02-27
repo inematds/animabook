@@ -1,9 +1,9 @@
-import { parseStoryMd } from '@/lib/parseStory';
+import { parseStoryContent, parseStoryMd } from '@/lib/parseStory';
 import { getBooks } from '@/lib/getBooks';
 import { StoryEditor } from '@/components/editor/StoryEditor';
+import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 
-// This page is for local development only. In production it shows a message.
 export const dynamic = 'force-dynamic';
 
 interface Props {
@@ -11,26 +11,24 @@ interface Props {
 }
 
 export default async function EditorPage({ params }: Props) {
-  if (process.env.NODE_ENV !== 'development') {
-    return (
-      <div
-        className="min-h-dvh flex items-center justify-center"
-        style={{ background: '#1a0a2e', color: '#e8c84a', fontFamily: 'var(--font-bangers)', fontSize: '24px' }}
-      >
-        Editor disponível apenas em desenvolvimento local.
-      </div>
-    );
-  }
-
   const { bookId } = await params;
 
   const books = getBooks();
   const book = books.find(b => b.id === bookId);
   if (!book) notFound();
 
-  const story = parseStoryMd(bookId);
+  // Tenta Supabase primeiro
+  const { data } = await supabase
+    .from('stories')
+    .select('content')
+    .eq('book_id', bookId)
+    .single();
 
-  // If no story.md yet, create default scenes from images
+  let story = data?.content
+    ? parseStoryContent(bookId, data.content)
+    : parseStoryMd(bookId);
+
+  // Sem cenas: gera a partir das imagens PNG
   if (story.scenes.length === 0) {
     const fs = await import('fs');
     const path = await import('path');
@@ -38,7 +36,6 @@ export default async function EditorPage({ params }: Props) {
     const images = fs.readdirSync(bookDir)
       .filter((f: string) => f.toLowerCase().endsWith('.png'))
       .sort();
-
     story.scenes = images.map((file: string, index: number) => ({
       imageFile: file,
       imageUrl: `/books/${bookId}/${file}`,
