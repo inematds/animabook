@@ -28,5 +28,5 @@ export default async function BookPage({ params }: Props) {
     notFound();
   }
 
-  return <BookReader story={story} />;
+  return <BookReader story={story} isDevMode={process.env.NODE_ENV === 'development'} />;
 }

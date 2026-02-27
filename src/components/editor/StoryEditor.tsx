@@ -137,25 +137,24 @@ export function StoryEditor({ initialStory }: StoryEditorProps) {
         <div className="flex flex-1 overflow-hidden flex-col lg:flex-row">
           {/* Preview */}
           <div
-            className="flex-1 overflow-y-auto p-4"
+            className="flex-1 overflow-y-auto p-2"
             style={{ background: 'linear-gradient(135deg, #1a0a2e 0%, #0f1a3d 100%)' }}
           >
-            <p
-              className="text-xs text-white/40 text-center mb-3"
-              style={{ fontFamily: 'var(--font-nunito)' }}
-            >
-              Pré-visualização
-            </p>
-            {scene && <SceneView scene={scene} isTransitioning={false} />}
+            {scene && (
+              <div style={{ maxWidth: '420px', margin: '0 auto' }}>
+                <SceneView scene={scene} isTransitioning={false} />
+              </div>
+            )}
           </div>
 
           {/* Editor panel */}
           <div
-            className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l overflow-hidden"
+            className="w-full lg:w-72 border-t lg:border-t-0 lg:border-l overflow-y-auto"
             style={{
               borderColor: 'rgba(232,200,74,0.2)',
               background: 'rgba(10,6,18,0.95)',
-              maxHeight: '50dvh',
+              maxHeight: '55dvh',
+              minHeight: '200px',
             }}
           >
             {scene && (
