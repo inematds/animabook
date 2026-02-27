@@ -14,7 +14,7 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
-const adminSupabase = createClient(
+const admin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
@@ -22,67 +22,88 @@ const adminSupabase = createClient(
 export default async function PublicationPage({ params }: Props) {
   const { id } = await params;
 
-  const { data: pub } = await adminSupabase
+  // Busca publicação (sem join)
+  const { data: pub, error: pubError } = await admin
     .from('publications')
-    .select('*, profiles(username)')
+    .select('id, user_id, book_id, content, published_at')
     .eq('id', id)
     .single();
 
-  if (!pub) notFound();
+  if (pubError || !pub) notFound();
 
+  // Busca profile separado
+  const { data: profile } = await admin
+    .from('profiles')
+    .select('username')
+    .eq('id', pub.user_id)
+    .single();
+
+  const authorName = profile?.username ?? 'Usuário';
+
+  // Sessão do usuário
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const { count: likesCount } = await adminSupabase
+  // Likes
+  const { count: likesCount } = await admin
     .from('likes')
     .select('*', { count: 'exact', head: true })
     .eq('publication_id', id);
 
   let userLiked = false;
   if (user) {
-    const { data: likeRow } = await adminSupabase
+    const { data: likeRow } = await admin
       .from('likes')
       .select('user_id')
       .eq('user_id', user.id)
       .eq('publication_id', id)
-      .single();
+      .maybeSingle();
     userLiked = !!likeRow;
   }
 
-  const { data: commentsRaw } = await adminSupabase
+  // Comentários (busca profile separado em vez de join)
+  const { data: commentsRaw } = await admin
     .from('comments')
-    .select('*, profiles(username)')
+    .select('id, user_id, publication_id, text, created_at')
     .eq('publication_id', id)
     .order('created_at', { ascending: true });
 
-  const comments = (commentsRaw ?? []) as Comment[];
+  const commentUserIds = [...new Set((commentsRaw ?? []).map(c => c.user_id))];
+  const { data: commentProfiles } = commentUserIds.length > 0
+    ? await admin.from('profiles').select('id, username').in('id', commentUserIds)
+    : { data: [] };
 
+  const profileMap = Object.fromEntries((commentProfiles ?? []).map(p => [p.id, p.username]));
+
+  const comments: Comment[] = (commentsRaw ?? []).map(c => ({
+    ...c,
+    profiles: { username: profileMap[c.user_id] ?? 'Usuário' },
+  }));
+
+  // Username do usuário logado
   let username: string | null = null;
   if (user) {
-    const { data: profile } = await adminSupabase
+    const { data: myProfile } = await admin
       .from('profiles')
       .select('username')
       .eq('id', user.id)
       .single();
-    username = profile?.username ?? null;
+    username = myProfile?.username ?? null;
   }
 
-  // Tenta parsear o conteúdo salvo; fallback para story.md se vazio
-  let story = parseStoryContent(pub.book_id, pub.content ?? '');
-  if (story.scenes.length === 0) {
-    const { parseStoryMd } = await import('@/lib/parseStory');
-    story = parseStoryMd(pub.book_id);
-  }
+  // Parse story
+  const story = parseStoryContent(pub.book_id, pub.content ?? '');
   if (story.scenes.length === 0) notFound();
-
-  const authorName = (pub.profiles as { username: string } | null)?.username ?? 'Usuário';
 
   return (
     <>
-      {/* BookReader com fundo próprio */}
-      <BookReader story={story} isDevMode={false} isLoggedIn={!!user} publicationMeta={{ author: authorName, bookId: pub.book_id, publicationId: id }} />
+      <BookReader
+        story={story}
+        isDevMode={false}
+        isLoggedIn={!!user}
+        publicationMeta={{ author: authorName, bookId: pub.book_id, publicationId: id }}
+      />
 
-      {/* Likes + Comentários abaixo do fold */}
       <div style={{ background: 'linear-gradient(135deg, #1a0a2e 0%, #0f1a3d 100%)', padding: '24px 16px 48px' }}>
         <div style={{ maxWidth: '840px', margin: '0 auto' }}>
           <div style={{ marginBottom: '24px' }}>

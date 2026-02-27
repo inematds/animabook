@@ -54,25 +54,35 @@ export default async function BookPage({ params }: Props) {
 
   const { data: pubs } = await adminSupabase
     .from('publications')
-    .select('id, user_id, book_id, published_at, profiles(username)')
+    .select('id, user_id, book_id, published_at')
     .eq('book_id', bookId)
     .order('published_at', { ascending: false });
 
-  const publications: Publication[] = await Promise.all(
-    (pubs ?? []).map(async (pub) => {
-      const [{ count: likes }, { count: comments }] = await Promise.all([
-        adminSupabase.from('likes').select('*', { count: 'exact', head: true }).eq('publication_id', pub.id),
-        adminSupabase.from('comments').select('*', { count: 'exact', head: true }).eq('publication_id', pub.id),
-      ]);
-      return {
-        ...pub,
-        content: '',
-        likes_count: likes ?? 0,
-        comments_count: comments ?? 0,
-        profiles: Array.isArray(pub.profiles) ? pub.profiles[0] : pub.profiles,
-      } as Publication;
-    })
+  const pubList = pubs ?? [];
+
+  // Busca profiles e contagens em paralelo
+  const pubUserIds = [...new Set(pubList.map(p => p.user_id))];
+  const [profilesResult, ...counts] = await Promise.all([
+    pubUserIds.length > 0
+      ? adminSupabase.from('profiles').select('id, username').in('id', pubUserIds)
+      : Promise.resolve({ data: [] }),
+    ...pubList.flatMap(pub => [
+      adminSupabase.from('likes').select('*', { count: 'exact', head: true }).eq('publication_id', pub.id),
+      adminSupabase.from('comments').select('*', { count: 'exact', head: true }).eq('publication_id', pub.id),
+    ]),
+  ]);
+
+  const profileMap = Object.fromEntries(
+    ((profilesResult as { data: { id: string; username: string }[] | null }).data ?? []).map(p => [p.id, p.username])
   );
+
+  const publications: Publication[] = pubList.map((pub, i) => ({
+    ...pub,
+    content: '',
+    likes_count: (counts[i * 2] as { count: number | null }).count ?? 0,
+    comments_count: (counts[i * 2 + 1] as { count: number | null }).count ?? 0,
+    profiles: { username: profileMap[pub.user_id] ?? 'Usuário' },
+  }));
 
   return (
     <>
