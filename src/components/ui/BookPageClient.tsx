@@ -251,8 +251,20 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
                           }}>
                             {pub.authorName}
                             {versionLabel && (
-                              <span style={{ fontFamily: 'var(--font-bangers)', fontSize: '11px', color, marginLeft: '4px', opacity: 0.8 }}>
-                                {versionLabel}
+                              <span style={{
+                                fontFamily: 'var(--font-bangers)',
+                                fontSize: '11px',
+                                letterSpacing: '0.04em',
+                                color: '#1a0a2e',
+                                background: color,
+                                borderRadius: '6px',
+                                padding: '1px 5px',
+                                marginLeft: '5px',
+                                verticalAlign: 'middle',
+                                display: 'inline-block',
+                                lineHeight: 1.4,
+                              }}>
+                                {versionLabel.trim()}
                               </span>
                             )}
                           </div>
