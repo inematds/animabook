@@ -64,3 +64,25 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
   return NextResponse.json({ story, likesCount: likesCount ?? 0, userLiked, comments });
 }
+
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
+  const auth = req.headers.get('Authorization');
+  const token = auth?.replace('Bearer ', '').trim();
+  if (!token) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
+
+  const { data: { user } } = await admin.auth.getUser(token);
+  if (!user) return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
+
+  const { data: pub } = await admin.from('publications').select('user_id').eq('id', id).single();
+  if (!pub || pub.user_id !== user.id) {
+    return NextResponse.json({ error: 'Não autorizado' }, { status: 403 });
+  }
+
+  await admin.from('likes').delete().eq('publication_id', id);
+  await admin.from('comments').delete().eq('publication_id', id);
+  await admin.from('publications').delete().eq('id', id);
+
+  return NextResponse.json({ ok: true });
+}

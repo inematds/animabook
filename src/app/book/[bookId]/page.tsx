@@ -106,6 +106,7 @@ export default async function BookPage({ params }: Props) {
 
   const publications: PubSummary[] = pubList.map((pub, i) => ({
     id: pub.id,
+    authorId: pub.user_id,
     authorName: profileMap[pub.user_id] ?? 'Anônimo',
     publishedAt: pub.published_at,
     likesCount: (likeCounts[i] as { count: number | null }).count ?? 0,

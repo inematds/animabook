@@ -9,6 +9,7 @@ import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 
 export interface PubSummary {
   id: string;
+  authorId: string;
   authorName: string;
   publishedAt: string;
   likesCount: number;
@@ -48,7 +49,8 @@ function relativeDate(iso: string) {
 
 const COLORS = ['#e8c84a', '#a78bfa', '#4ade80', '#f43f5e', '#60a5fa', '#fb923c'];
 
-export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, userId, username, isDevMode }: Props) {
+export function BookPageClient({ baseStory, synopsis, publications: initialPublications, isLoggedIn, userId, username, isDevMode }: Props) {
+  const [pubs, setPubs] = useState(initialPublications);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [pubData, setPubData] = useState<PubData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -57,8 +59,23 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
 
   // Abre sidebar automaticamente apenas em desktop (≥768px)
   useEffect(() => {
-    if (publications.length > 0 && window.innerWidth >= 768) setOpen(true);
-  }, [publications.length]);
+    if (pubs.length > 0 && window.innerWidth >= 768) setOpen(true);
+  }, [pubs.length]);
+
+  async function deletePub(pubId: string) {
+    if (!confirm('Excluir esta publicação? Esta ação não pode ser desfeita.')) return;
+    const sb = createSupabaseBrowserClient();
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session?.access_token) return;
+    const res = await fetch(`/api/publication/${pubId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${session.access_token}` },
+    });
+    if (res.ok) {
+      setPubs(prev => prev.filter(p => p.id !== pubId));
+      if (selectedId === pubId) { setSelectedId(null); setPubData(null); }
+    }
+  }
 
   async function selectPub(pubId: string | null) {
     if (pubId === null) {
@@ -86,18 +103,18 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
   }
 
   const story = pubData?.story ?? baseStory;
-  const selectedPub = publications.find(p => p.id === selectedId);
+  const selectedPub = pubs.find(p => p.id === selectedId);
 
   return (
     <div style={{ position: 'relative' }}>
 
       {/* ───── Sidebar ───── */}
-      {publications.length > 0 && (
+      {pubs.length > 0 && (
         <>
           {/* Botão toggle — sempre visível na borda esquerda */}
           <button
             onClick={() => setOpen(v => !v)}
-            title={open ? 'Fechar lista' : `${publications.length} publicação(ões)`}
+            title={open ? 'Fechar lista' : `${pubs.length} publicação(ões)`}
             style={{
               position: 'fixed',
               left: open ? 176 : 0,
@@ -195,29 +212,41 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
                     // Conta quantas vezes cada autor aparece para numerar versões
                     const authorCount: Record<string, number> = {};
                     const authorIndex: Record<string, number> = {};
-                    publications.forEach(p => { authorCount[p.authorName] = (authorCount[p.authorName] ?? 0) + 1; });
-                    return publications.map((pub, i) => {
+                    pubs.forEach(p => { authorCount[p.authorName] = (authorCount[p.authorName] ?? 0) + 1; });
+                    return pubs.map((pub, i) => {
                     const color = COLORS[i % COLORS.length];
                     const isSelected = selectedId === pub.id;
                     const multiVersion = authorCount[pub.authorName] > 1;
                     authorIndex[pub.authorName] = (authorIndex[pub.authorName] ?? 0) + 1;
                     const versionLabel = multiVersion ? ` v${authorIndex[pub.authorName]}` : '';
                     return (
-                      <button
+                      <div
                         key={pub.id}
-                        onClick={() => selectPub(pub.id)}
                         style={{
                           width: '100%',
-                          textAlign: 'left',
                           padding: '8px',
                           borderRadius: '10px',
                           border: `1.5px solid ${isSelected ? color : 'transparent'}`,
                           background: isSelected ? `rgba(${hexRgb(color)},0.12)` : 'rgba(255,255,255,0.03)',
-                          cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'flex-start',
                           gap: '8px',
                           transition: 'all 0.15s',
+                          position: 'relative',
+                        }}
+                      >
+                      <button
+                        onClick={() => selectPub(pub.id)}
+                        style={{
+                          flex: 1,
+                          textAlign: 'left',
+                          background: 'transparent',
+                          border: 'none',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: '8px',
+                          padding: 0,
                         }}
                       >
                         {/* Avatar */}
@@ -285,6 +314,25 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
                           </div>
                         </div>
                       </button>
+                      {userId === pub.authorId && (
+                        <button
+                          onClick={() => deletePub(pub.id)}
+                          title="Excluir publicação"
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            color: 'rgba(248,113,113,0.5)',
+                            fontSize: '13px',
+                            padding: '2px 4px',
+                            flexShrink: 0,
+                            lineHeight: 1,
+                          }}
+                        >
+                          ✕
+                        </button>
+                      )}
+                      </div>
                     );
                   });})()}
                 </div>
