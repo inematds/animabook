@@ -34,13 +34,17 @@ export default async function EditorPage({ params }: Props) {
 
   const originalStory = parseStoryMd(bookId);
 
-  let story = draft?.content
-    ? parseStoryContent(bookId, draft.content)
-    : originalStory;
+  // Cenas limpas: só as imagens, sem narrador nem diálogos
+  const emptyScenes = originalStory.scenes.map(s => ({ ...s, narrator: '', bubbles: [] as typeof s.bubbles }));
 
-  // Se o rascunho tem menos cenas que o original, ignora o rascunho
-  if (draft?.content && story.scenes.length < originalStory.scenes.length) {
-    story = originalStory;
+  let story = { ...originalStory, scenes: emptyScenes };
+
+  if (draft?.content) {
+    const draftStory = parseStoryContent(bookId, draft.content);
+    // Só usa o rascunho se tiver o mesmo número de cenas que o original
+    if (draftStory.scenes.length >= originalStory.scenes.length) {
+      story = draftStory;
+    }
   }
 
   // Sem cenas: gera a partir das imagens PNG
