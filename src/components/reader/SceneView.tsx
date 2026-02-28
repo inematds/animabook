@@ -10,10 +10,12 @@ import { sceneVariants } from '@/lib/animationVariants';
 interface SceneViewProps {
   scene: Scene;
   isTransitioning: boolean;
+  isOriginal?: boolean;
+  synopsis?: string;
   onBubbleMove?: (bubbleIndex: number, x: number, y: number) => void;
 }
 
-export function SceneView({ scene, isTransitioning, onBubbleMove }: SceneViewProps) {
+export function SceneView({ scene, isTransitioning, isOriginal, synopsis, onBubbleMove }: SceneViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const w = scene.width ?? 1344;
@@ -31,7 +33,8 @@ export function SceneView({ scene, isTransitioning, onBubbleMove }: SceneViewPro
       animate={isTransitioning ? 'exit' : 'visible'}
       className="flex flex-col w-full"
     >
-      {scene.narrator && (
+      {/* NarratorBox clássico só para publicações */}
+      {!isOriginal && scene.narrator && (
         <NarratorBox text={scene.narrator} sceneKey={scene.index} />
       )}
 
@@ -52,8 +55,57 @@ export function SceneView({ scene, isTransitioning, onBubbleMove }: SceneViewPro
             style={{ background: 'radial-gradient(ellipse at center, transparent 60%, rgba(26,10,46,0.4) 100%)' }}
           />
 
+          {/* Capa do original: synopsis sobreposta na imagem */}
+          {isOriginal && synopsis && (
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(to top, rgba(10,6,18,0.97) 0%, rgba(10,6,18,0.82) 55%, rgba(10,6,18,0.45) 100%)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-end',
+              padding: '20px 18px 24px',
+              overflowY: 'auto',
+            }}>
+              <p style={{
+                fontFamily: 'var(--font-nunito)',
+                fontSize: 'clamp(13px, 3.5vw, 16px)',
+                lineHeight: 1.75,
+                color: 'rgba(245,240,232,0.92)',
+                margin: 0,
+                whiteSpace: 'pre-wrap',
+              }}>
+                {synopsis}
+              </p>
+            </div>
+          )}
+
+          {/* Narrador sobreposto na imagem (original, cenas 1+) */}
+          {isOriginal && !synopsis && scene.narrator && (
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              background: 'linear-gradient(to top, rgba(10,6,18,0.92) 0%, rgba(10,6,18,0.6) 60%, transparent 100%)',
+              padding: '48px 16px 14px',
+            }}>
+              <p style={{
+                fontFamily: 'var(--font-nunito)',
+                fontSize: 'clamp(13px, 3.5vw, 16px)',
+                lineHeight: 1.65,
+                color: 'rgba(245,240,232,0.92)',
+                margin: 0,
+                fontStyle: 'italic',
+              }}>
+                {scene.narrator}
+              </p>
+            </div>
+          )}
+
+          {/* Balões apenas para publicações */}
           <AnimatePresence>
-            {!isTransitioning &&
+            {!isOriginal && !isTransitioning &&
               scene.bubbles.map((bubble, i) => (
                 <SpeechBubble
                   key={`${scene.index}-${i}`}

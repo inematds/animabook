@@ -347,6 +347,7 @@ export function BookPageClient({ baseStory, synopsis, publications: initialPubli
         story={story}
         isDevMode={isDevMode}
         isLoggedIn={isLoggedIn}
+        synopsis={synopsis}
         publicationMeta={selectedPub
           ? { author: selectedPub.authorName, bookId: baseStory.bookId, publicationId: selectedPub.id }
           : undefined}

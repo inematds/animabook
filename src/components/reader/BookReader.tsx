@@ -20,9 +20,10 @@ interface BookReaderProps {
   isDevMode: boolean;
   isLoggedIn?: boolean;
   publicationMeta?: PublicationMeta;
+  synopsis?: string;
 }
 
-export function BookReader({ story, isDevMode, isLoggedIn = false, publicationMeta }: BookReaderProps) {
+export function BookReader({ story, isDevMode, isLoggedIn = false, publicationMeta, synopsis }: BookReaderProps) {
   const { index, isTransitioning, isFirst, isLast, goNext, goPrev, goTo } =
     useSceneState(story.scenes.length);
 
@@ -33,6 +34,7 @@ export function BookReader({ story, isDevMode, isLoggedIn = false, publicationMe
 
   const scene = story.scenes[index];
   const isEmpty = scene && !scene.narrator && scene.bubbles.length === 0;
+  const isOriginal = !publicationMeta;
 
   return (
     <div
@@ -142,7 +144,12 @@ export function BookReader({ story, isDevMode, isLoggedIn = false, publicationMe
         {/* Cena */}
         {scene && (
           <div className="relative">
-            <SceneView scene={scene} isTransitioning={isTransitioning} />
+            <SceneView
+              scene={scene}
+              isTransitioning={isTransitioning}
+              isOriginal={isOriginal}
+              synopsis={isOriginal && index === 0 ? synopsis : undefined}
+            />
 
             {/* Estado vazio — mostra apenas em dev */}
             {isEmpty && isDevMode && (

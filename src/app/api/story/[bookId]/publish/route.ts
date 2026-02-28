@@ -31,7 +31,21 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: 'Conteúdo inválido' }, { status: 400 });
   }
 
-  // Salva rascunho e cria publicação em paralelo
+  // Remove publicação anterior do mesmo usuário neste livro (1 por pessoa)
+  const { data: existing } = await admin
+    .from('publications')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('book_id', bookId)
+    .single();
+
+  if (existing) {
+    await admin.from('likes').delete().eq('publication_id', existing.id);
+    await admin.from('comments').delete().eq('publication_id', existing.id);
+    await admin.from('publications').delete().eq('id', existing.id);
+  }
+
+  // Salva rascunho e publica
   const [, pubResult] = await Promise.all([
     admin.from('drafts').upsert(
       { user_id: user.id, book_id: bookId, content, updated_at: new Date().toISOString() },
