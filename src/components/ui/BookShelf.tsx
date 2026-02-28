@@ -58,6 +58,19 @@ export function BookShelf({ books, videos, isLoggedIn, username, visitStats }: B
     router.refresh();
   }
 
+  async function handleDeleteAccount() {
+    if (!confirm('Tem certeza que quer excluir sua conta? Esta ação não pode ser desfeita.')) return;
+    const supabase = createSupabaseBrowserClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.access_token) return;
+    await fetch('/api/user', {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${session.access_token}` },
+    });
+    await supabase.auth.signOut();
+    router.refresh();
+  }
+
   return (
     <div
       className="min-h-dvh flex flex-col relative overflow-hidden"
@@ -133,6 +146,22 @@ export function BookShelf({ books, videos, isLoggedIn, username, visitStats }: B
                   }}
                 >
                   Sair
+                </button>
+                <button
+                  onClick={handleDeleteAccount}
+                  title="Excluir minha conta"
+                  style={{
+                    fontFamily: 'var(--font-bangers)',
+                    fontSize: '11px',
+                    letterSpacing: '0.05em',
+                    color: 'rgba(248,113,113,0.4)',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: '3px 4px',
+                  }}
+                >
+                  🗑
                 </button>
               </div>
             ) : (
