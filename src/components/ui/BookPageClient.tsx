@@ -191,9 +191,17 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
 
                 {/* Lista de publicações */}
                 <div style={{ flex: 1, padding: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  {publications.map((pub, i) => {
+                  {(() => {
+                    // Conta quantas vezes cada autor aparece para numerar versões
+                    const authorCount: Record<string, number> = {};
+                    const authorIndex: Record<string, number> = {};
+                    publications.forEach(p => { authorCount[p.authorName] = (authorCount[p.authorName] ?? 0) + 1; });
+                    return publications.map((pub, i) => {
                     const color = COLORS[i % COLORS.length];
                     const isSelected = selectedId === pub.id;
+                    const multiVersion = authorCount[pub.authorName] > 1;
+                    authorIndex[pub.authorName] = (authorIndex[pub.authorName] ?? 0) + 1;
+                    const versionLabel = multiVersion ? ` v${authorIndex[pub.authorName]}` : '';
                     return (
                       <button
                         key={pub.id}
@@ -242,6 +250,11 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
                             textOverflow: 'ellipsis',
                           }}>
                             {pub.authorName}
+                            {versionLabel && (
+                              <span style={{ fontFamily: 'var(--font-bangers)', fontSize: '11px', color, marginLeft: '4px', opacity: 0.8 }}>
+                                {versionLabel}
+                              </span>
+                            )}
                           </div>
                           <div style={{
                             display: 'flex',
@@ -261,7 +274,7 @@ export function BookPageClient({ baseStory, synopsis, publications, isLoggedIn, 
                         </div>
                       </button>
                     );
-                  })}
+                  });})()}
                 </div>
               </motion.div>
             )}
