@@ -36,8 +36,13 @@ yarn-error.log*
 # vercel
 .vercel
 
-# Generated assets (don't commit, recreated at build time)
-/public/books/
+# Imagens nos livros: rastreadas em public/books/ (não em books/)
+/books/**/*.png
+/books/**/*.jpg
+/books/**/*.jpeg
+/books/**/*.webp
+# public/books/ é rastreado para PNGs (assets estáticos, fora do bundle serverless)
+/public/books/**/*.md
 
 # typescript
 *.tsbuildinfo
