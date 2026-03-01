@@ -14,20 +14,18 @@ export function getBooks(): BookInfo[] {
     .sort();
 
   return dirs.map(id => {
-    const bookDir = path.join(booksDir, id);
-    const images = fs.readdirSync(bookDir)
-      .filter(f => f.toLowerCase().endsWith('.png'))
-      .sort();
-
     const story = parseStoryMd(id);
-    const coverImage = images.length > 0 ? `/books/${id}/${images[0]}` : '';
     const displayTitle = story.title !== id ? story.title : formatBookId(id);
+
+    // Usa o story.md como fonte de verdade (evita incluir PNGs no bundle serverless)
+    const coverImage = story.scenes.length > 0 ? story.scenes[0].imageUrl : '';
+    const sceneCount = story.scenes.length;
 
     return {
       id,
       title: displayTitle,
       coverImage,
-      sceneCount: images.length,
+      sceneCount,
     };
   });
 }
