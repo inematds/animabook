@@ -1,0 +1,1 @@
+A turma da INETUSX descobre que o planeta que pisam todo dia é muito mais do que um cenário. Da crosta fina onde vivemos até o núcleo a 5.200 graus, do espaço onde a Terra parece um ponto azul até o fundo dos oceanos sem luz solar — esta é a introdução ao planeta mais bem-sucedido que conhecemos. Ciência real, escala impossível, e a pergunta que fica: o que faremos com tudo isso?
