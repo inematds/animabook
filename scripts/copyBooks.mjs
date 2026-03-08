@@ -7,8 +7,6 @@ const root = path.join(__dirname, '..');
 const src = path.join(root, 'books');
 const dest = path.join(root, 'public', 'books');
 
-const TEXT_EXTS = ['.md', '.txt', '.json'];
-
 function copyDir(srcDir, destDir) {
   fs.mkdirSync(destDir, { recursive: true });
   for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
@@ -16,9 +14,7 @@ function copyDir(srcDir, destDir) {
     const destPath = path.join(destDir, entry.name);
     if (entry.isDirectory()) {
       copyDir(srcPath, destPath);
-    } else if (TEXT_EXTS.some(ext => entry.name.toLowerCase().endsWith(ext))) {
-      // Copia apenas arquivos de texto (.md, .txt, .json)
-      // PNGs ficam em public/books/ diretamente (rastreados no git)
+    } else {
       fs.copyFileSync(srcPath, destPath);
     }
   }

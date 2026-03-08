@@ -183,12 +183,12 @@ npm run dev
 ## Deploy
 
 ```bash
-# Apenas o story.md base fica no git (sem public/books/)
-git add books/livro1/story.md
+# Inclua o livro inteiro; use -f porque imagens em books/ ficam ignoradas no git
+git add -f books/livro1/
 git commit -m "conteúdo livro1"
 git push   # Vercel faz build + deploy automaticamente (~90s)
 ```
 
 **Vercel:** configurar as três variáveis de ambiente em Settings → Environment Variables.
 
-**Importante:** nunca commitar `public/books/` (gerado no build).
+**Importante:** nunca commite `public/books/`; ele é gerado no build a partir de `books/`.
