@@ -295,8 +295,8 @@ export function BookShelf({ books, videos, isLoggedIn, username, visitStats }: B
           </Link>
         </motion.div>}
 
-        {/* ── Book grid — 2 colunas ── */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
+        {/* ── Book grid — 3 colunas ── */}
+        <div className="grid grid-cols-3 gap-2 mb-4">
           {books.map((book, i) => (
             <motion.div
               key={book.id}
