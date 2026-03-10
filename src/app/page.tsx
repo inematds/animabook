@@ -13,7 +13,7 @@ export default async function HomePage() {
   );
 
   const [books, videos, supabase, visitsResult] = await Promise.all([
-    Promise.resolve(getBooks()),
+    getBooks(),
     fetchLatestVideos(),
     createSupabaseServerClient(),
     admin.from('visits').select('user_id, session_id'),

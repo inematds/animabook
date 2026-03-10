@@ -13,7 +13,7 @@ interface Props {
 export default async function EditorPage({ params }: Props) {
   const { bookId } = await params;
 
-  const books = getBooks();
+  const books = await getBooks();
   const book = books.find(b => b.id === bookId);
   if (!book) notFound();
 
