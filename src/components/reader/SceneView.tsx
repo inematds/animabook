@@ -33,10 +33,11 @@ export function SceneView({ scene, isTransitioning, isOriginal, synopsis, onBubb
       animate={isTransitioning ? 'exit' : 'visible'}
       className="flex flex-col w-full"
     >
-      {/* NarratorBox clássico só para publicações */}
+      {/* NarratorBox clássico (acima da imagem) para publicações */}
       {!isOriginal && scene.narrator && (
         <NarratorBox text={scene.narrator} sceneKey={scene.index} />
       )}
+
 
       <div className="relative w-full mx-auto" style={{ maxWidth }}>
         <div ref={containerRef} className="relative w-full" style={{ aspectRatio }}>
@@ -103,9 +104,9 @@ export function SceneView({ scene, isTransitioning, isOriginal, synopsis, onBubb
             </div>
           )}
 
-          {/* Balões apenas para publicações */}
+          {/* Balões de diálogo — todos os modos */}
           <AnimatePresence>
-            {!isOriginal && !isTransitioning &&
+            {!isTransitioning &&
               scene.bubbles.map((bubble, i) => (
                 <SpeechBubble
                   key={`${scene.index}-${i}`}
