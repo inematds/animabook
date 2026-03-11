@@ -9,6 +9,9 @@ function getAdminClient() {
   );
 }
 
+// Aumentar timeout para uploads (Vercel Pro: até 300s, Free: 10s)
+export const maxDuration = 60;
+
 const ALLOWED_MIME = ['image/png', 'image/jpeg', 'image/webp'];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB por arquivo
 

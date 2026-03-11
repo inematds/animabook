@@ -93,19 +93,27 @@ export default function BookEditorPage({ params }: { params: Promise<{ id: strin
     const supabase = createSupabaseBrowserClient();
     const { data: { session } } = await supabase.auth.getSession();
 
-    const res = await fetch(`/api/admin/books/${bookId}/upload`, {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${session?.access_token}` },
-      body: formData,
-    });
+    try {
+      const res = await fetch(`/api/admin/books/${bookId}/upload`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${session?.access_token}` },
+        body: formData,
+      });
 
-    const data = await res.json();
-    if (res.ok) {
-      setUploadMessage(`${data.uploaded} imagens enviadas${data.errors?.length ? `. Erros: ${data.errors.join(', ')}` : ''}`);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-      await loadBook();
-    } else {
-      setUploadMessage(data.error || 'Erro no upload');
+      if (!res.ok) {
+        const text = await res.text();
+        let msg = 'Erro no upload';
+        try { msg = JSON.parse(text).error || msg; } catch {}
+        if (res.status === 504) msg = 'Timeout — tente enviar menos imagens por vez';
+        setUploadMessage(msg);
+      } else {
+        const data = await res.json();
+        setUploadMessage(`${data.uploaded} imagens enviadas${data.errors?.length ? `. Erros: ${data.errors.join(', ')}` : ''}`);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        await loadBook();
+      }
+    } catch (err) {
+      setUploadMessage('Falha na conexão — verifique sua rede e tente novamente');
     }
     setUploading(false);
   }
