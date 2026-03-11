@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import sharp from 'sharp';
 import { requireRole, isErrorResponse } from '@/lib/requireAdmin';
 
 function getAdminClient() {
@@ -14,6 +15,8 @@ export const maxDuration = 60;
 
 const ALLOWED_MIME = ['image/png', 'image/jpeg', 'image/webp'];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB por arquivo
+const MAX_WIDTH = 1344; // largura padrão do projeto
+const WEBP_QUALITY = 82; // boa qualidade, arquivo pequeno
 
 // POST /api/admin/books/:id/upload — upload de imagens (creator+)
 export async function POST(
@@ -86,15 +89,38 @@ export async function POST(
       continue;
     }
 
-    const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
-    const normalizedName = `cena-${String(sortOrder + 1).padStart(2, '0')}.${ext}`;
+    const normalizedName = `cena-${String(sortOrder + 1).padStart(2, '0')}.webp`;
     const storagePath = `${book.slug}/${normalizedName}`;
 
-    const buffer = await file.arrayBuffer();
+    // Otimizar imagem: redimensionar + converter para WebP
+    const rawBuffer = Buffer.from(await file.arrayBuffer());
+    let optimized: Buffer;
+    let width: number | undefined;
+    let height: number | undefined;
+    try {
+      const img = sharp(rawBuffer);
+      const meta = await img.metadata();
+      width = meta.width;
+      height = meta.height;
+
+      let pipeline = img;
+      if (meta.width && meta.width > MAX_WIDTH) {
+        pipeline = pipeline.resize(MAX_WIDTH, undefined, { withoutEnlargement: true });
+        if (meta.width && meta.height) {
+          height = Math.round(meta.height * (MAX_WIDTH / meta.width));
+          width = MAX_WIDTH;
+        }
+      }
+      optimized = await pipeline.webp({ quality: WEBP_QUALITY }).toBuffer();
+    } catch {
+      errors.push(`${file.name}: falha ao processar imagem`);
+      continue;
+    }
+
     const { error: uploadError } = await supabase.storage
       .from('book-assets')
-      .upload(storagePath, buffer, {
-        contentType: file.type,
+      .upload(storagePath, optimized, {
+        contentType: 'image/webp',
         upsert: true,
       });
 
@@ -109,7 +135,9 @@ export async function POST(
         book_id: bookId,
         filename: normalizedName,
         storage_path: storagePath,
-        mime_type: file.type,
+        mime_type: 'image/webp',
+        width: width ?? null,
+        height: height ?? null,
         sort_order: sortOrder,
         kind: 'scene',
       })

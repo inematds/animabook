@@ -82,39 +82,56 @@ export default function BookEditorPage({ params }: { params: Promise<{ id: strin
     const files = fileInputRef.current?.files;
     if (!files || files.length === 0) return;
 
+    const fileList = Array.from(files);
     setUploading(true);
-    setUploadMessage('');
-
-    const formData = new FormData();
-    for (const file of Array.from(files)) {
-      formData.append('images', file);
-    }
+    setUploadMessage(`Enviando 0/${fileList.length}...`);
 
     const supabase = createSupabaseBrowserClient();
     const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
 
-    try {
-      const res = await fetch(`/api/admin/books/${bookId}/upload`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${session?.access_token}` },
-        body: formData,
-      });
+    let sent = 0;
+    let failed = 0;
+    const errors: string[] = [];
 
-      if (!res.ok) {
-        const text = await res.text();
-        let msg = 'Erro no upload';
-        try { msg = JSON.parse(text).error || msg; } catch {}
-        if (res.status === 504) msg = 'Timeout — tente enviar menos imagens por vez';
-        setUploadMessage(msg);
-      } else {
-        const data = await res.json();
-        setUploadMessage(`${data.uploaded} imagens enviadas${data.errors?.length ? `. Erros: ${data.errors.join(', ')}` : ''}`);
-        if (fileInputRef.current) fileInputRef.current.value = '';
-        await loadBook();
+    // Enviar uma por uma para não estourar timeout
+    for (const file of fileList) {
+      setUploadMessage(`Enviando ${sent + 1}/${fileList.length} — ${file.name}...`);
+
+      const formData = new FormData();
+      formData.append('images', file);
+
+      try {
+        const res = await fetch(`/api/admin/books/${bookId}/upload`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: formData,
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          sent += data.uploaded;
+          if (data.errors?.length) errors.push(...data.errors);
+        } else {
+          failed++;
+          const text = await res.text();
+          let msg = file.name + ': erro';
+          try { msg = file.name + ': ' + JSON.parse(text).error; } catch {}
+          errors.push(msg);
+        }
+      } catch {
+        failed++;
+        errors.push(`${file.name}: falha na conexão`);
       }
-    } catch (err) {
-      setUploadMessage('Falha na conexão — verifique sua rede e tente novamente');
     }
+
+    let msg = `${sent} imagens enviadas`;
+    if (failed > 0) msg += `, ${failed} falharam`;
+    if (errors.length > 0) msg += `. ${errors.join('; ')}`;
+    setUploadMessage(msg);
+
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    await loadBook();
     setUploading(false);
   }
 
