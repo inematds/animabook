@@ -55,6 +55,7 @@ export default function BookEditorPage({ params }: { params: Promise<{ id: strin
   const [storyContent, setStoryContent] = useState('');
   const [title, setTitle] = useState('');
   const [synopsis, setSynopsis] = useState('');
+  const [userRole, setUserRole] = useState('creator');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -72,6 +73,7 @@ export default function BookEditorPage({ params }: { params: Promise<{ id: strin
       setStoryContent(data.book.story_content || '');
       setTitle(data.book.title);
       setSynopsis(data.book.synopsis || '');
+      if (data.userRole) setUserRole(data.userRole);
     }
     setLoading(false);
   }
@@ -233,24 +235,27 @@ export default function BookEditorPage({ params }: { params: Promise<{ id: strin
           </div>
         </div>
         <div className="flex gap-2">
-          {book.status !== 'published' ? (
-            <button onClick={handlePublish} disabled={publishing} style={{
-              fontFamily: 'var(--font-bangers)', fontSize: '14px', color: '#1a0a2e',
-              background: publishing ? 'rgba(52,211,153,0.4)' : 'linear-gradient(135deg, #34d399, #10b981)',
-              borderRadius: '20px', padding: '8px 18px', border: 'none',
-              cursor: publishing ? 'not-allowed' : 'pointer', letterSpacing: '0.04em',
-            }}>
-              {publishing ? 'Publicando...' : 'Publicar'}
-            </button>
-          ) : (
-            <button onClick={handleUnpublish} style={{
-              fontFamily: 'var(--font-bangers)', fontSize: '14px', color: '#fbbf24',
-              background: 'rgba(251,191,36,0.1)', borderRadius: '20px',
-              padding: '8px 18px', border: '1px solid rgba(251,191,36,0.4)',
-              cursor: 'pointer', letterSpacing: '0.04em',
-            }}>
-              Despublicar
-            </button>
+          {/* Publicar/Despublicar — só editor+ */}
+          {(userRole === 'editor' || userRole === 'admin') && (
+            book.status !== 'published' ? (
+              <button onClick={handlePublish} disabled={publishing} style={{
+                fontFamily: 'var(--font-bangers)', fontSize: '14px', color: '#1a0a2e',
+                background: publishing ? 'rgba(52,211,153,0.4)' : 'linear-gradient(135deg, #34d399, #10b981)',
+                borderRadius: '20px', padding: '8px 18px', border: 'none',
+                cursor: publishing ? 'not-allowed' : 'pointer', letterSpacing: '0.04em',
+              }}>
+                {publishing ? 'Publicando...' : 'Publicar'}
+              </button>
+            ) : (
+              <button onClick={handleUnpublish} style={{
+                fontFamily: 'var(--font-bangers)', fontSize: '14px', color: '#fbbf24',
+                background: 'rgba(251,191,36,0.1)', borderRadius: '20px',
+                padding: '8px 18px', border: '1px solid rgba(251,191,36,0.4)',
+                cursor: 'pointer', letterSpacing: '0.04em',
+              }}>
+                Despublicar
+              </button>
+            )
           )}
           {book.status === 'published' && (
             <a

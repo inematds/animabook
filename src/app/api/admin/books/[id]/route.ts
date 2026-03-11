@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { requireAdmin, isErrorResponse } from '@/lib/requireAdmin';
+import { requireRole, isErrorResponse } from '@/lib/requireAdmin';
 
 function getAdminClient() {
   return createClient(
@@ -9,12 +9,12 @@ function getAdminClient() {
   );
 }
 
-// GET /api/admin/books/:id — detalhes do livro + assets
+// GET /api/admin/books/:id — detalhes do livro (creator+)
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAdmin(request);
+  const auth = await requireRole(request, 'creator');
   if (isErrorResponse(auth)) return auth;
 
   const { id } = await params;
@@ -30,25 +30,45 @@ export async function GET(
     return NextResponse.json({ error: 'Livro não encontrado' }, { status: 404 });
   }
 
+  // Creator só pode ver seus próprios livros
+  if (auth.role === 'creator' && bookResult.data.created_by !== auth.userId) {
+    return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+  }
+
   return NextResponse.json({
     book: bookResult.data,
     assets: assetsResult.data ?? [],
     ingests: ingestsResult.data ?? [],
+    userRole: auth.role,
   });
 }
 
-// PATCH /api/admin/books/:id — atualiza metadados
+// PATCH /api/admin/books/:id — atualiza metadados (creator+ para próprios, editor+ para qualquer)
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAdmin(request);
+  const auth = await requireRole(request, 'creator');
   if (isErrorResponse(auth)) return auth;
 
   const { id } = await params;
+  const supabase = getAdminClient();
+
+  // Verificar propriedade se creator
+  if (auth.role === 'creator') {
+    const { data: book } = await supabase.from('books').select('created_by').eq('id', id).single();
+    if (book?.created_by !== auth.userId) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+    }
+  }
+
   const body = await request.json();
 
-  const allowedFields = ['title', 'synopsis', 'story_content', 'cover_asset_id', 'status'];
+  // Creator não pode mudar status
+  const allowedFields = auth.role === 'creator'
+    ? ['title', 'synopsis', 'story_content', 'cover_asset_id']
+    : ['title', 'synopsis', 'story_content', 'cover_asset_id', 'status'];
+
   const updates: Record<string, unknown> = {};
   for (const field of allowedFields) {
     if (field in body) updates[field] = body[field];
@@ -59,8 +79,6 @@ export async function PATCH(
   }
 
   updates.updated_at = new Date().toISOString();
-
-  const supabase = getAdminClient();
 
   const { data, error } = await supabase
     .from('books')
@@ -76,18 +94,17 @@ export async function PATCH(
   return NextResponse.json(data);
 }
 
-// DELETE /api/admin/books/:id — exclui livro e assets
+// DELETE /api/admin/books/:id — exclui livro (admin only)
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAdmin(request);
+  const auth = await requireRole(request, 'admin');
   if (isErrorResponse(auth)) return auth;
 
   const { id } = await params;
   const supabase = getAdminClient();
 
-  // Buscar assets para limpar storage
   const { data: assets } = await supabase
     .from('book_assets')
     .select('storage_path')
@@ -98,7 +115,6 @@ export async function DELETE(
     await supabase.storage.from('book-assets').remove(paths);
   }
 
-  // CASCADE deleta book_assets e book_ingests
   const { error } = await supabase.from('books').delete().eq('id', id);
 
   if (error) {

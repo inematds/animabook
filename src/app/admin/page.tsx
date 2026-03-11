@@ -11,6 +11,7 @@ interface Book {
   status: string;
   published_at: string | null;
   created_at: string;
+  created_by: string;
   assets_count: number;
 }
 
@@ -23,12 +24,21 @@ async function getAuthHeaders() {
   };
 }
 
+async function getUserRole(): Promise<string> {
+  const supabase = createSupabaseBrowserClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return 'user';
+  const { data } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+  return data?.role ?? 'user';
+}
+
 export default function AdminDashboard() {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
+  const [role, setRole] = useState('user');
 
   useEffect(() => {
-    loadBooks();
+    Promise.all([loadBooks(), getUserRole().then(setRole)]);
   }, []);
 
   async function loadBooks() {
@@ -46,8 +56,13 @@ export default function AdminDashboard() {
     const res = await fetch(`/api/admin/books/${bookId}`, { method: 'DELETE', headers });
     if (res.ok) {
       setBooks(prev => prev.filter(b => b.id !== bookId));
+    } else {
+      const data = await res.json();
+      alert(data.error || 'Erro ao excluir');
     }
   }
+
+  const canDelete = role === 'admin';
 
   const statusColors: Record<string, string> = {
     draft: '#fbbf24',
@@ -154,21 +169,23 @@ export default function AdminDashboard() {
                   >
                     Editar
                   </Link>
-                  <button
-                    onClick={() => handleDelete(book.id, book.title)}
-                    style={{
-                      fontFamily: 'var(--font-nunito)',
-                      fontSize: '12px',
-                      color: 'rgba(248,113,113,0.8)',
-                      background: 'rgba(248,113,113,0.1)',
-                      border: '1px solid rgba(248,113,113,0.3)',
-                      borderRadius: '8px',
-                      padding: '4px 12px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Excluir
-                  </button>
+                  {canDelete && (
+                    <button
+                      onClick={() => handleDelete(book.id, book.title)}
+                      style={{
+                        fontFamily: 'var(--font-nunito)',
+                        fontSize: '12px',
+                        color: 'rgba(248,113,113,0.8)',
+                        background: 'rgba(248,113,113,0.1)',
+                        border: '1px solid rgba(248,113,113,0.3)',
+                        borderRadius: '8px',
+                        padding: '4px 12px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Excluir
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

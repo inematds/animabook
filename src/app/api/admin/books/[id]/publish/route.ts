@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { requireAdmin, isErrorResponse } from '@/lib/requireAdmin';
+import { requireRole, isErrorResponse } from '@/lib/requireAdmin';
 
 function getAdminClient() {
   return createClient(
@@ -9,18 +9,17 @@ function getAdminClient() {
   );
 }
 
-// POST /api/admin/books/:id/publish — publica o livro
+// POST /api/admin/books/:id/publish — publica o livro (editor+)
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAdmin(request);
+  const auth = await requireRole(request, 'editor');
   if (isErrorResponse(auth)) return auth;
 
   const { id } = await params;
   const supabase = getAdminClient();
 
-  // Verificar se tem assets
   const { data: assets } = await supabase
     .from('book_assets')
     .select('id')
@@ -30,7 +29,6 @@ export async function POST(
     return NextResponse.json({ error: 'Livro não tem imagens. Envie imagens antes de publicar.' }, { status: 400 });
   }
 
-  // Verificar se tem story_content
   const { data: book } = await supabase
     .from('books')
     .select('story_content')
@@ -59,12 +57,12 @@ export async function POST(
   return NextResponse.json(data);
 }
 
-// DELETE /api/admin/books/:id/publish — despublica o livro
+// DELETE /api/admin/books/:id/publish — despublica o livro (editor+)
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAdmin(request);
+  const auth = await requireRole(request, 'editor');
   if (isErrorResponse(auth)) return auth;
 
   const { id } = await params;

@@ -1,17 +1,29 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
-interface AdminAuth {
+export type Role = 'user' | 'creator' | 'editor' | 'admin';
+
+/** Hierarquia: admin > editor > creator > user */
+const ROLE_LEVEL: Record<Role, number> = {
+  user: 0,
+  creator: 1,
+  editor: 2,
+  admin: 3,
+};
+
+interface AuthResult {
   userId: string;
+  role: Role;
 }
 
 /**
- * Verifica se o request vem de um admin autenticado.
- * Retorna { userId } se OK, ou NextResponse de erro.
+ * Verifica se o request vem de um usuário com role >= minRole.
+ * Retorna { userId, role } se OK, ou NextResponse de erro.
  */
-export async function requireAdmin(
-  request: NextRequest
-): Promise<AdminAuth | NextResponse> {
+export async function requireRole(
+  request: NextRequest,
+  minRole: Role = 'creator'
+): Promise<AuthResult | NextResponse> {
   const authHeader = request.headers.get('Authorization');
   if (!authHeader?.startsWith('Bearer ')) {
     return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
@@ -35,14 +47,21 @@ export async function requireAdmin(
     .eq('id', user.id)
     .single();
 
-  if (profile?.role !== 'admin') {
+  const role = (profile?.role as Role) || 'user';
+
+  if (ROLE_LEVEL[role] < ROLE_LEVEL[minRole]) {
     return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
   }
 
-  return { userId: user.id };
+  return { userId: user.id, role };
+}
+
+/** Atalho para manter compatibilidade — exige pelo menos creator */
+export async function requireAdmin(request: NextRequest) {
+  return requireRole(request, 'creator');
 }
 
 /** Helper para verificar se resultado é erro */
-export function isErrorResponse(result: AdminAuth | NextResponse): result is NextResponse {
+export function isErrorResponse(result: AuthResult | NextResponse): result is NextResponse {
   return result instanceof NextResponse;
 }

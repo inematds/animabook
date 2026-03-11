@@ -21,7 +21,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     .eq('id', user.id)
     .single();
 
-  if (profile?.role !== 'admin') redirect('/');
+  const role = profile?.role as string;
+
+  // Precisa ser pelo menos creator para acessar /admin
+  if (!role || !['creator', 'editor', 'admin'].includes(role)) {
+    redirect('/');
+  }
 
   return (
     <div
@@ -37,24 +42,42 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         }}
       >
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <h1
-            style={{
-              fontFamily: 'var(--font-bangers)',
-              fontSize: '24px',
-              color: 'var(--comic-yellow)',
-              textShadow: '2px 2px 0 var(--comic-shadow)',
-              letterSpacing: '0.06em',
-            }}
-          >
-            ADMIN
-          </h1>
+          <div className="flex items-center gap-3">
+            <h1
+              style={{
+                fontFamily: 'var(--font-bangers)',
+                fontSize: '24px',
+                color: 'var(--comic-yellow)',
+                textShadow: '2px 2px 0 var(--comic-shadow)',
+                letterSpacing: '0.06em',
+              }}
+            >
+              ADMIN
+            </h1>
+            <span style={{
+              fontFamily: 'var(--font-nunito)',
+              fontSize: '10px',
+              color: role === 'admin' ? '#34d399' : role === 'editor' ? '#60a5fa' : '#fbbf24',
+              background: role === 'admin' ? 'rgba(52,211,153,0.15)' : role === 'editor' ? 'rgba(96,165,250,0.15)' : 'rgba(251,191,36,0.15)',
+              border: `1px solid ${role === 'admin' ? 'rgba(52,211,153,0.4)' : role === 'editor' ? 'rgba(96,165,250,0.4)' : 'rgba(251,191,36,0.4)'}`,
+              borderRadius: '10px',
+              padding: '1px 8px',
+            }}>
+              {role}
+            </span>
+          </div>
           <nav className="flex gap-3">
             <a href="/admin" style={{ fontFamily: 'var(--font-nunito)', fontSize: '13px', color: 'rgba(232,200,74,0.7)', textDecoration: 'none' }}>
-              Dashboard
+              Livros
             </a>
             <a href="/admin/books/new" style={{ fontFamily: 'var(--font-nunito)', fontSize: '13px', color: 'rgba(232,200,74,0.7)', textDecoration: 'none' }}>
-              + Novo Livro
+              + Novo
             </a>
+            {role === 'admin' && (
+              <a href="/admin/users" style={{ fontFamily: 'var(--font-nunito)', fontSize: '13px', color: 'rgba(52,211,153,0.7)', textDecoration: 'none' }}>
+                Usuários
+              </a>
+            )}
             <a href="/" style={{ fontFamily: 'var(--font-nunito)', fontSize: '13px', color: 'rgba(255,255,255,0.4)', textDecoration: 'none' }}>
               Voltar
             </a>

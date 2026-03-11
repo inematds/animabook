@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { requireAdmin, isErrorResponse } from '@/lib/requireAdmin';
+import { requireRole, isErrorResponse } from '@/lib/requireAdmin';
 
 function getAdminClient() {
   return createClient(
@@ -9,21 +9,28 @@ function getAdminClient() {
   );
 }
 
-// GET /api/admin/books — lista todos os livros (admin)
+// GET /api/admin/books — lista todos os livros (creator+)
 export async function GET(request: NextRequest) {
-  const auth = await requireAdmin(request);
+  const auth = await requireRole(request, 'creator');
   if (isErrorResponse(auth)) return auth;
 
   const supabase = getAdminClient();
 
-  const { data: books, error } = await supabase
+  // Creator só vê seus próprios livros, editor/admin vê todos
+  let query = supabase
     .from('books')
     .select(`
-      id, slug, title, synopsis, status, published_at, created_at, updated_at,
+      id, slug, title, synopsis, status, published_at, created_at, updated_at, created_by,
       cover_asset:book_assets!books_cover_asset_id_fkey(id, storage_path),
       assets_count:book_assets(count)
     `)
     .order('created_at', { ascending: false });
+
+  if (auth.role === 'creator') {
+    query = query.eq('created_by', auth.userId);
+  }
+
+  const { data: books, error } = await query;
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -39,9 +46,9 @@ export async function GET(request: NextRequest) {
   return NextResponse.json(result);
 }
 
-// POST /api/admin/books — cria novo livro
+// POST /api/admin/books — cria novo livro (creator+)
 export async function POST(request: NextRequest) {
-  const auth = await requireAdmin(request);
+  const auth = await requireRole(request, 'creator');
   if (isErrorResponse(auth)) return auth;
 
   const body = await request.json();
@@ -51,7 +58,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'slug e title são obrigatórios' }, { status: 400 });
   }
 
-  // Validar slug: só letras minúsculas, números e hífens
   if (!/^[a-z0-9-]+$/.test(slug)) {
     return NextResponse.json({ error: 'slug deve conter apenas letras minúsculas, números e hífens' }, { status: 400 });
   }
