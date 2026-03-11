@@ -323,25 +323,43 @@ export default function BookEditorPage({ params }: { params: Promise<{ id: strin
           Imagens ({assets.length} cenas)
         </h3>
 
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          multiple
+          style={{ display: 'none' }}
+          onChange={() => {
+            const count = fileInputRef.current?.files?.length ?? 0;
+            if (count > 0) setUploadMessage(`${count} arquivo(s) selecionado(s)`);
+          }}
+        />
         <div className="flex items-center gap-3 mb-4">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/png,image/jpeg,image/webp"
-            multiple
-            style={{ fontFamily: 'var(--font-nunito)', fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}
-          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            style={{
+              fontFamily: 'var(--font-nunito)', fontSize: '13px',
+              color: '#e8c84a',
+              background: 'rgba(232,200,74,0.1)',
+              border: '1.5px dashed rgba(232,200,74,0.4)',
+              borderRadius: '10px', padding: '10px 16px',
+              cursor: uploading ? 'not-allowed' : 'pointer',
+            }}
+          >
+            Selecionar imagens...
+          </button>
           <button
             onClick={handleUpload}
             disabled={uploading}
             style={{
               fontFamily: 'var(--font-bangers)', fontSize: '13px', color: '#1a0a2e',
               background: uploading ? 'rgba(232,200,74,0.4)' : 'linear-gradient(135deg, #e8c84a, #f5a623)',
-              borderRadius: '16px', padding: '6px 14px', border: 'none',
+              borderRadius: '16px', padding: '8px 16px', border: 'none',
               cursor: uploading ? 'not-allowed' : 'pointer', letterSpacing: '0.04em', whiteSpace: 'nowrap' as const,
             }}
           >
-            {uploading ? 'Enviando...' : 'Upload'}
+            {uploading ? 'Enviando...' : 'Enviar'}
           </button>
         </div>
 

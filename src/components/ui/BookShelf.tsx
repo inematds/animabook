@@ -121,7 +121,7 @@ export function BookShelf({ books, videos, isLoggedIn, username, visitStats }: B
                 color: 'rgba(232,200,74,0.4)',
                 letterSpacing: '0.04em',
               }}>
-                v3.2.0
+                v3.2.1
               </span>
             </motion.div>
 
