@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Animabook — Quadrinhos animados na web</title>
+<meta name="description" content="Plataforma web mobile-first para criar, publicar e interagir com histórias em quadrinhos animadas. Leitor animado, editor por usuário, likes e comentários.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0c10; --bg2:#14141b; --card:#16161e; --line:#272730;
+    --txt:#e9e9ee; --mut:#9a9aa6; --amb:#E2A23B; --amb2:#f0c070; --sky:#38bdf8;
+    color-scheme:dark;
+  }
+  body.light{
+    --bg:#f6f7f9; --bg2:#eceef2; --card:#ffffff; --line:#e1e3ea;
+    --txt:#1a1a22; --mut:#5b5b68; --amb:#b9791d; --amb2:#a16207; --sky:#0369a1;
+    color-scheme:light;
+  }
+  body.light .hero .glow{opacity:.5}
+  body.light pre{background:#0e0e14;color:#d6d6e0}
+  body.light pre .c{color:#8a8a98}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.65 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:Sora,sans-serif;line-height:1.15;margin:0}
+  a{color:var(--amb);text-decoration:none}
+  code,pre{font-family:"JetBrains Mono",monospace}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 22px}
+  .mut{color:var(--mut)} .amb{color:var(--amb)}
+  .chip{display:inline-block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amb);font-weight:600;font-family:Sora}
+  nav{position:sticky;top:0;z-index:30;backdrop-filter:blur(12px);background:rgba(12,12,16,.78);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;gap:22px;height:60px}
+  nav .brand{display:flex;align-items:center;gap:8px;font-family:Sora;font-weight:800;letter-spacing:-.02em;color:var(--amb)}
+  nav .brand .emoji{font-size:1.25rem}
+  nav .sep{color:var(--mut);opacity:.45}
+  nav .inema{color:var(--sky);font-weight:600;font-size:.88rem;font-family:Sora}
+  nav .inema:hover{filter:brightness(1.15)}
+  nav .links{margin-left:auto;display:flex;align-items:center;gap:20px;font-size:.92rem}
+  nav .links a.sec{color:var(--mut)} nav .links a.sec:hover{color:var(--txt)}
+  .tgl{background:var(--bg2);border:1px solid var(--line);color:var(--txt);width:38px;height:38px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:1.05rem}
+  .tgl:hover{border-color:var(--amb)}
+  .btn{display:inline-block;background:var(--amb);color:#1a1206;font-weight:600;padding:.6em 1.05em;border-radius:10px;font-family:Sora}
+  .btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+  @media(max-width:760px){nav .links a.sec{display:none}}
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+  .hero .glow{position:absolute;inset:-40% -20% auto auto;width:70%;height:600px;background:radial-gradient(closest-side,rgba(226,162,59,.22),transparent 70%);pointer-events:none}
+  .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:74px 22px}
+  .hero h1{font-size:clamp(2.2rem,5vw,3.5rem);font-weight:800;letter-spacing:-.025em}
+  .hero p.lead{font-size:1.18rem;color:var(--mut);margin:1.1em 0 1.6em;max-width:34ch}
+  .hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+  .hero figure{margin:0;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000}
+  .hero figure img{width:100%;display:block}
+  @media(max-width:780px){.hero .wrap{grid-template-columns:1fr;padding:48px 22px}}
+  section{padding:62px 0;border-bottom:1px solid var(--line)}
+  section h2{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:800;letter-spacing:-.02em}
+  section .sub{color:var(--mut);margin:.6em 0 2em;max-width:62ch}
+  .grid{display:grid;gap:16px}
+  .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:820px){.g3,.g4{grid-template-columns:1fr 1fr}}
+  @media(max-width:540px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .card h3{font-size:1.05rem;margin-bottom:.4em}
+  .card p{color:var(--mut);font-size:.92rem;margin:0}
+  .num{display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;border-radius:8px;background:rgba(226,162,59,.14);color:var(--amb);font-family:Sora;font-weight:800;font-size:.9rem;margin-bottom:.7em}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+  .flow span{background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:.45em .9em;font-size:.85rem;font-family:Sora;font-weight:600}
+  .flow .arr{color:var(--amb);border:none;background:none;padding:0 .1em}
+  pre{background:#0a0a0e;border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow:auto;font-size:.86rem;line-height:1.6;color:#d6d6e0}
+  pre .c{color:#6f6f7c} pre .k{color:var(--amb2)} pre .s{color:#9ece6a}
+  .step{display:grid;grid-template-columns:46px 1fr;gap:16px;margin-bottom:26px}
+  .step .b{width:46px;height:46px;border-radius:12px;background:var(--amb);color:#1a1206;font-family:Sora;font-weight:800;font-size:1.25rem;display:flex;align-items:center;justify-content:center}
+  .step h3{font-size:1.12rem;margin-bottom:.3em}
+  .step p{color:var(--mut);margin:.2em 0 .7em}
+  .ex{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:680px){.ex{grid-template-columns:1fr}}
+  .ex figure{margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+  .ex figure img{width:100%;display:block}
+  .ex figcaption{padding:12px 14px;font-size:.88rem;color:var(--mut);background:var(--card)}
+  .phase{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+  .phase:last-child{border:none}
+  .phase .tag{flex:0 0 92px;font-family:Sora;font-weight:800;color:var(--amb)}
+  .phase .d strong{display:block;margin-bottom:.2em}
+  .phase .d span{color:var(--mut);font-size:.92rem}
+  footer{padding:46px 0;text-align:center;color:var(--mut);font-size:.9rem}
+  .pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:.3em .8em;font-size:.78rem;color:var(--mut);margin:0 4px}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="brand" href="#top"><span class="emoji">📖</span> Animabook</a>
+  <span class="sep">|</span>
+  <a class="inema" href="https://inema.club" target="_blank" rel="noopener">INEMA.CLUB</a>
+  <div class="links">
+    <a class="sec" href="#oque">O que é</a>
+    <a class="sec" href="#fluxo">Como funciona</a>
+    <a class="sec" href="#guia">Guia de uso</a>
+    <a class="sec" href="#exemplos">Exemplos</a>
+    <a class="sec" href="#roadmap">Roadmap</a>
+    <button class="tgl" id="themeToggle" aria-label="Alternar tema" title="Alternar tema">🌙</button>
+    <a class="btn" href="https://github.com/inematds/animabook" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</div></nav>
+
+<header class="hero" id="top">
+  <div class="glow"></div>
+  <div class="wrap">
+    <div>
+      <span class="chip">Plataforma web · mobile-first</span>
+      <h1>Quadrinhos <span class="amb">animados</span> que qualquer um pode escrever</h1>
+      <p class="lead">Leia histórias com balões em spring animation e narrador typewriter; logado, escreva seu próprio rascunho e publique versões autorais que outros curtem e comentam.</p>
+      <div class="cta">
+        <a class="btn" href="#guia">Começar o guia</a>
+        <a class="btn ghost" href="https://github.com/inematds/animabook" target="_blank" rel="noopener">Ver no GitHub</a>
+      </div>
+    </div>
+    <figure><pre><span class="c"># rodar localmente</span>
+<span class="k">npm install</span>
+<span class="k">npm run dev</span>
+<span class="c"># abre em http://localhost:3000</span></pre></figure>
+  </div>
+</header>
+
+<section id="oque"><div class="wrap">
+  <span class="chip">O que é</span>
+  <h2>Uma estante de quadrinhos animados, com autoria aberta</h2>
+  <p class="sub">Qualquer pessoa lê os livros. Usuários logados têm seu próprio rascunho por livro, posicionam os balões sobre a imagem e publicam versões que outros podem curtir e comentar. Tudo persistido no Supabase.</p>
+  <div class="grid g3">
+    <div class="card"><h3>📖 Reader animado</h3><p>Balões de fala com spring animation, narrador com efeito typewriter, transições entre cenas e swipe pra navegar. Suporta landscape, portrait e square sem distorção.</p></div>
+    <div class="card"><h3>📖 Editor por usuário</h3><p>Cada usuário tem seu rascunho por livro, salvo no Supabase com Ctrl+S. Balões arrastáveis posicionados livremente sobre a imagem.</p></div>
+    <div class="card"><h3>📖 Social embutido</h3><p>Botão "Publicar 🚀" cria a versão pública; likes e comentários nas publicações (com login). Home mostra contador de acessos via tabela visits.</p></div>
+  </div>
+</div></section>
+
+<section id="fluxo"><div class="wrap">
+  <span class="chip">Como funciona</span>
+  <h2>Do rascunho à publicação curtida</h2>
+  <p class="sub">A história começa como um story.md por livro. No editor, você escreve narrador e diálogos por cena, arrasta os balões e salva. Publicar gera uma versão pública aberta a interações.</p>
+  <div class="flow">
+    <span>Conta (/login)</span><span class="arr">→</span>
+    <span>Editor (/editor)</span><span class="arr">→</span>
+    <span>Ctrl+S salva rascunho</span><span class="arr">→</span>
+    <span>🚀 Publicar</span><span class="arr">→</span>
+    <span>/publication/[id]</span><span class="arr">→</span>
+    <span>Likes + comentários</span>
+  </div>
+  <div class="grid g2" style="margin-top:26px">
+    <div class="card"><h3>Formato story.md</h3><p><code>&lt;!-- scene: arquivo.png --&gt;</code> abre nova cena; <code>&gt; texto</code> é narrador; <code>[Nome@esq]</code> / <code>[Nome@dir]</code> são balões; <code>x=0.5 y=0.3</code> posiciona o balão.</p></div>
+    <div class="card"><h3>Supabase + RLS</h3><p>Tabelas profiles, drafts, publications, likes, comments e visits, todas com RLS. Leitura pública; escrita exige autenticação.</p></div>
+  </div>
+</div></section>
+
+<section id="pre"><div class="wrap">
+  <span class="chip">Pré-requisitos</span>
+  <h2>O que você precisa antes de rodar</h2>
+  <p class="sub">Animabook é Next.js 16 + React 19 + Supabase. Você precisa de Node, das dependências instaladas e de um projeto Supabase com as três variáveis de ambiente configuradas.</p>
+  <div class="grid g3">
+    <div class="card"><h3>Node + npm</h3><p>Clone o repositório e instale as dependências do projeto.</p><pre><span class="c"># instalar deps</span>
+<span class="k">npm install</span></pre></div>
+    <div class="card"><h3>Projeto Supabase</h3><p>Crie um projeto Supabase e configure as três variáveis (anon, service role) no ambiente.</p><pre><span class="c"># .env</span>
+<span class="k">NEXT_PUBLIC_SUPABASE_URL</span>=<span class="s">https://...supabase.co</span>
+<span class="k">NEXT_PUBLIC_SUPABASE_ANON_KEY</span>=<span class="s">eyJ...</span>
+<span class="k">SUPABASE_SERVICE_ROLE_KEY</span>=<span class="s">eyJ...</span></pre></div>
+    <div class="card"><h3>Tabelas com RLS</h3><p>Crie as tabelas no SQL Editor do Supabase, ex. a tabela de visitas:</p><pre><span class="c"># SQL Editor do Supabase</span>
+<span class="k">create table</span> visits ( ... );
+<span class="k">alter table</span> visits enable row level security;</pre></div>
+  </div>
+</div></section>
+
+<section id="guia"><div class="wrap">
+  <span class="chip">Guia de uso · passo a passo</span>
+  <h2>Escrever, publicar e fazer deploy</h2>
+  <p class="sub">Fluxo de autoria do README: subir o app, criar conta, editar por cena, arrastar balões, salvar e publicar. No fim, deploy automático na Vercel.</p>
+
+  <div class="step"><div class="b">1</div><div>
+    <h3>Subir o app localmente</h3>
+    <p>O script de dev copia <code>books/</code> pra <code>public/books/</code> antes de iniciar o Next.</p>
+<pre><span class="k">npm run dev</span>  <span class="c"># http://localhost:3000</span></pre>
+  </div></div>
+
+  <div class="step"><div class="b">2</div><div>
+    <h3>Criar conta e abrir o editor</h3>
+    <p>Cadastre-se e abra o editor do livro. A rota /editor/* é protegida por proxy (redireciona pra /login).</p>
+<pre><span class="c"># no navegador</span>
+<span class="k">/login</span>            <span class="c"># cria sua conta</span>
+<span class="k">/editor/livro1</span>    <span class="c"># editor (requer login)</span></pre>
+  </div></div>
+
+  <div class="step"><div class="b">3</div><div>
+    <h3>Escrever e posicionar</h3>
+    <p>Escreva narrador e diálogos por cena, depois arraste os balões pra posição desejada. Salve o rascunho no Supabase.</p>
+<pre><span class="c"># dentro do editor</span>
+<span class="k">Ctrl+S</span>   <span class="c"># salva o rascunho no Supabase</span></pre>
+  </div></div>
+
+  <div class="step"><div class="b">4</div><div>
+    <h3>Publicar</h3>
+    <p>Clique em "🚀 Publicar" pra criar a versão pública — você é redirecionado pra /publication/[id], onde outros podem curtir e comentar.</p>
+<pre><span class="c"># gera versão pública</span>
+<span class="k">🚀 Publicar</span> → <span class="s">/publication/[id]</span></pre>
+  </div></div>
+
+  <div class="step"><div class="b">5</div><div>
+    <h3>Deploy na Vercel</h3>
+    <p>Inclua o livro inteiro com <code>-f</code> (imagens em books/ são ignoradas no git) e dê push — a Vercel faz build + deploy automático.</p>
+<pre><span class="k">git add</span> -f books/livro1/
+<span class="k">git commit</span> -m <span class="s">"conteúdo livro1"</span>
+<span class="k">git push</span>  <span class="c"># Vercel: build + deploy (~90s)</span></pre>
+  </div></div>
+</div></section>
+
+<section id="exemplos"><div class="wrap">
+  <span class="chip">Exemplos</span>
+  <h2>O que dá pra fazer</h2>
+  <p class="sub">Animabook é mobile-first e cobre leitura, autoria e interação social numa mesma estante de livros.</p>
+  <div class="grid g2">
+    <div class="card"><h3>Ler um livro animado</h3><p>Em /book/livro1, balões em spring animation e narrador typewriter; swipe entre cenas. A sidebar lista todas as versões publicadas.</p></div>
+    <div class="card"><h3>Reimaginar uma história</h3><p>Cada autor escreve seu próprio rascunho do mesmo livro e publica sua versão — múltiplas publicações por livro, uma por autor.</p></div>
+    <div class="card"><h3>Posicionar os balões</h3><p>Arraste cada balão livremente sobre a imagem; a posição é gravada como fração (x, y) e respeita o aspect ratio da cena.</p></div>
+    <div class="card"><h3>Engajar com a comunidade</h3><p>Curta e comente publicações de outros autores; a home exibe pageviews totais, visitantes logados e anônimos.</p></div>
+  </div>
+</div></section>
+
+<section id="roadmap"><div class="wrap">
+  <span class="chip">Roadmap</span>
+  <h2>Onde o Animabook está</h2>
+  <p class="sub">A plataforma já está no ar em animabook.vercel.app com reader, editor, publicações e social. As fases abaixo resumem o estado e a evolução natural.</p>
+  <div class="phase"><div class="tag">No ar</div><div class="d"><strong>Leitura + autoria + social</strong><span>Reader animado, editor por usuário com balões arrastáveis, publicações, likes, comentários, auth e contador de acessos.</span></div></div>
+  <div class="phase"><div class="tag">Conteúdo</div><div class="d"><strong>Mais livros na estante</strong><span>Adicionar novos livros via books/ (PNG + story.md) e publicar com deploy automático na Vercel.</span></div></div>
+  <div class="phase"><div class="tag">Evolução</div><div class="d"><strong>Refino do editor e do social</strong><span>Mais controle de balões, transições e camadas de interação sobre as publicações existentes.</span></div></div>
+</div></section>
+
+<footer>
+  <div class="wrap">
+    <div class="pill">Next.js 16 + React 19</div><div class="pill">Framer Motion 12</div><div class="pill">Supabase + Tailwind 4</div>
+    <p style="margin-top:18px">Animabook · quadrinhos animados na web ·
+      <a href="https://github.com/inematds/animabook">github.com/inematds/animabook</a> ·
+      <a href="https://inema.club">INEMA.CLUB</a></p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var KEY='animabook-theme';
+    var b=document.body, t=document.getElementById('themeToggle');
+    if(localStorage.getItem(KEY)==='light'){ b.classList.add('light'); t.textContent='☀️'; }
+    t.addEventListener('click',function(){
+      var light=b.classList.toggle('light');
+      t.textContent=light?'☀️':'🌙';
+      localStorage.setItem(KEY, light?'light':'dark');
+    });
+  })();
+</script>
+</body>
+</html>
